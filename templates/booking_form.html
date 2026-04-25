@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Confirm Booking | MomentsMaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{background:#f4f6fb;padding:30px 15px;color:#222}
+.container{max-width:1200px;margin:auto;display:grid;grid-template-columns:2.2fr 1fr;gap:25px}
+.card{background:#fff;border-radius:14px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+h2{font-size:22px;margin-bottom:15px}
+.section{margin-bottom:25px}
+.section-title{font-size:15px;font-weight:600;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+input{width:100%;padding:11px;border-radius:8px;border:1px solid #dcdfe6;font-size:14px}
+.summary-line{display:flex;justify-content:space-between;margin-bottom:10px}
+.price{font-size:24px;font-weight:700;color:#16a34a}
+.confirm-btn{margin-top:15px;width:100%;padding:14px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}
+.theme-box{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.theme-box img{width:65px;height:65px;border-radius:10px;object-fit:cover}
+.note{margin-top:12px;font-size:12px;color:#555;text-align:center}
+@media(max-width:900px){.container{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<form method="POST" action="/create-order">
+<div class="container">
+
+<div class="card">
+<h2>Confirm Your Decoration Booking</h2>
+
+<div class="section">
+<div class="section-title">Selected Theme</div>
+<div class="theme-box">
+  <img src="/static/{{ theme.images[0] }}">
+  <div>
+    <strong>{{ theme.name }}</strong><br>
+    Event: {{ theme.category }}<br>
+    Price: ₹{{ theme.price }}
+  </div>
+</div>
+<input type="hidden" name="theme_id" value="{{ theme.id }}">
+</div>
+
+{% if addons %}
+<div class="section">
+<div class="section-title">Selected Add-Ons</div>
+
+{% for addon in addons %}
+<div class="theme-box">
+  <img src="/static/{{ addon.image }}">
+
+
+  <div>
+    <strong>{{ addon.name }}</strong><br>
+    Qty: {{ addon.qty }} <br>
+    ₹{{ addon.price * addon.qty }}
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+<div class="section">
+<div class="section-title">Personal Information</div>
+<div class="grid">
+<input type="text" name="name" placeholder="Full Name" required>
+<input type="email" name="email" placeholder="Email" required>
+<input type="text" name="mobile" pattern="[0-9]{10}" placeholder="Mobile Number" required>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Event Schedule</div>
+<div class="grid">
+<input type="date" name="event_date" required>
+<input type="time" name="event_time" required>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Venue Address</div>
+<div class="grid">
+<div style="grid-column:span 2;"><input type="text" name="address_line1" required placeholder="Address Line 1"></div>
+<div style="grid-column:span 2;"><input type="text" name="address_line2" placeholder="Address Line 2"></div>
+<input type="text" name="city" required placeholder="City">
+<input type="text" name="state" required placeholder="State">
+<input type="text" name="pincode" pattern="[0-9]{6}" required placeholder="Pincode">
+</div>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Booking Summary</h2>
+
+<div class="theme-box">
+  <img src="/static/{{ theme.images[0] }}">
+  <div><strong>{{ theme.name }}</strong><br>₹{{ theme.price }}</div>
+</div>
+
+{% for addon in addons %}
+<div class="theme-box">
+<img src="/static/{{ addon.image }}">
+
+
+  <div>{{ addon.name }} × {{ addon.qty }}<br>₹{{ addon.price * addon.qty }}</div>
+</div>
+{% endfor %}
+
+<hr style="margin:10px 0">
+
+<div class="summary-line"><span>Total Amount</span><strong id="totalPrice"></strong></div>
+<div class="summary-line"><span>Advance Payment</span><strong class="price" id="advancePrice"></strong></div>
+
+<input type="hidden" name="total_amount" id="totalInput">
+<input type="hidden" name="advance_amount" id="advanceInput">
+<input type="hidden" name="addons_json" id="addonsJson">
+
+<button type="submit" class="confirm-btn">
+Pay Advance ₹<span id="btnAdvance"></span> & Confirm Booking
+</button>
+
+<div class="note">Booking confirmed after advance payment.</div>
+</div>
+
+</div>
+</form>
+
+<script>
+let addonsFromServer = {{ addons|tojson }};
+let total = {{ theme.price }} + {{ addon_total }};
+
+function updateTotals(){
+  document.getElementById("totalPrice").innerText = "₹"+total;
+  let advance = Math.round(total * 0.5);
+  document.getElementById("advancePrice").innerText = "₹"+advance;
+  document.getElementById("btnAdvance").innerText = advance;
+  document.getElementById("totalInput").value = total;
+  document.getElementById("advanceInput").value = advance;
+  document.getElementById("addonsJson").value = JSON.stringify(addonsFromServer);
+}
+
+updateTotals();
+</script>
+
+</body>
+</html>

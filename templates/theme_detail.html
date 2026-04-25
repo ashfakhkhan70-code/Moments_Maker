@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MomentsMaker | Theme Details</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/logo2.jpeg') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:#f6f7fb;color:#0f172a}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+
+/* ================= HEADER ================= */
+header{
+  position:fixed;top:0;left:0;right:0;
+  background:rgba(0,0,0,.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index:1000;
+}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 22px;
+  position:relative;
+  height:70px;
+}
+.nav-left{display:flex;align-items:center;gap:14px}
+.menu-icon{font-size:1.6rem;color:#e5e7eb;cursor:pointer}
+.brand{
+  height:50px;width:82px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:pointer;
+}
+.brand img{
+  height:100%;width:100%;
+  object-fit:cover;object-position:center;
+  transform:scale(1.7);
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.65));
+  display:block;
+}
+.nav-center{
+  position:absolute;left:50%;
+  transform:translateX(-50%);
+}
+.nav-center ul{list-style:none;display:flex;gap:22px}
+.nav-center a{color:#fff}
+.nav-center a:hover{color:#ffb703}
+.login-btn{
+  padding:8px 20px;
+  border-radius:22px;
+  background:#2563eb;
+  color:#fff;
+  font-size:.9rem;
+}
+.spacer{height:70px}
+
+/* ================= SIDE MENU ================= */
+.side-menu{
+  position:fixed;
+  top:70px;
+  left:-300px;
+  width:280px;
+  height:calc(100vh - 70px);
+  background:rgba(0,0,0,.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding:18px;
+  transition:.35s ease;
+  z-index:1500;
+  border-right:1px solid rgba(255,255,255,.08);
+  box-shadow:4px 0 18px rgba(0,0,0,.55);
+}
+.side-menu.active{left:0}
+.menu-item{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px 10px;border-radius:12px;
+  cursor:pointer;color:#e5e7eb;transition:.2s;
+}
+.menu-item .left{display:flex;align-items:center;gap:12px}
+.menu-item i{color:#ffb703;width:18px}
+.menu-item:hover{background:rgba(255,255,255,.10);color:#fff}
+.menu-arrow{color:#cbd5e1;transition:.25s;font-size:.9rem}
+.menu-arrow.rotate{transform:rotate(180deg)}
+.sub-menu{padding-left:38px;display:none;margin-top:2px}
+.sub-menu li{padding:8px 0;cursor:pointer;color:#cbd5e1;transition:.2s}
+.sub-menu li:hover{color:#ffb703}
+
+/* ================= PAGE ================= */
+.container{max-width:1400px;margin:0 auto;padding:0 18px}
+.page{padding:18px 0 60px}
+.crumbs{color:#64748b;font-size:13px;margin:10px 0 14px}
+.crumbs a{color:#334155}
+.crumbs span{color:#94a3b8}
+
+/* ===== Layout ===== */
+.top-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+/* ✅ LEFT sticky image */
+.left-sticky{position:sticky;top:92px}
+.img-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  overflow:hidden;
+}
+.img-main{
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:zoom-in;
+  padding:14px;
+}
+.img-main img{
+  width:100%;
+  height:300px;
+  object-fit:contain;
+  display:block;
+  background:#fff;
+  border-radius:14px;
+  border:none;
+}
+
+/* RIGHT panel */
+.title{
+  font-size:22px;
+  font-weight:900;
+  line-height:1.25;
+}
+.price{
+  margin-top:10px;
+  font-size:22px;
+  font-weight:900;
+  color:#111827;
+}
+.bookbar{margin-top:14px}
+.book-btn{
+  width:220px;
+  padding:12px 18px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:900;
+  background:#446fef;
+  color:#fff;
+}
+
+/* ------------------- Addons ------------------- */
+.addons{
+  margin-top:16px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+}
+.addon-top{
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:12px 14px;
+  border-bottom:1px solid #eef2f7;
+  background:#fff;
+}
+.addon-tabs{display:flex;gap:18px}
+.addon-tab{
+  font-size:18px;
+  font-weight:700;
+  color:#0f172a;
+  padding:6px 2px;
+  position:relative;
+}
+.addon-tab:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-12px;
+  height:2px;background:#2563eb;
+}
+
+/* ✅ Pills wrapper + arrows */
+.cat-wrapper{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 10px;
+  border-bottom:1px solid #eef2f7;
+}
+.cat-row{
+  display:flex;
+  gap:10px;
+  padding:12px 4px;
+  overflow:auto;
+  scroll-behavior:smooth;
+  flex:1;
+}
+.cat-row::-webkit-scrollbar{height:6px}
+.cat-row::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:999px}
+
+.cat-prev, .cat-next{
+  flex:0 0 auto;
+  width:30px;height:30px;
+  border-radius:999px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;
+}
+.cat-prev{display:none;} /* start hidden */
+
+.pill{
+  flex:0 0 auto;
+  padding:7px 12px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.pill.active{
+  background:#2563eb;
+  border-color:#2563eb;
+  color:#fff;
+}
+
+/* ===== ADDON STRIP FRAME ===== */
+.addon-grid{
+  display:flex;
+  gap:18px;
+  padding:12px 0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+
+  width:100%;
+  max-width:100%;
+}
+
+/* Scroll area ko frame ke andar lock */
+.addons{
+  overflow:visible;   /* 👈 ye important hai */
+}
+
+/* EXACT 3 CARDS FIT */
+.addon-card{
+  flex:0 0 calc((100% - 36px) / 3);
+  max-width:calc((100% - 36px) / 3);
+  min-width:calc((100% - 36px) / 3);
+
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+aside{
+  min-width:0;
+}
+
+
+/* Image proportion */
+.addon-img{
+  height:180px;
+}
+
+/* Hide scrollbar */
+.addon-grid::-webkit-scrollbar{
+  display:none;
+}
+
+.addon-img{
+  height:200px;
+  background:#f1f5f9;
+  position:relative;
+}
+.addon-img img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.eye{
+  position:absolute;
+  top:10px;right:10px;
+  width:20px;height:20px;
+  border-radius:999px;
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(15,23,42,.12);
+  display:flex;align-items:center;justify-content:center;
+  color:#0f172a;
+  cursor:pointer;
+}
+.addon-name{
+  padding:12px 12px 0;
+  font-weight:900;
+  font-size:15px;
+  color:#334155;
+  text-align:center;
+  min-height:54px;
+}
+.addon-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  gap:10px;
+}
+.addon-price{
+  font-weight:900;
+  font-size:15px;
+  color:#2563eb;
+}
+.qtybox{display:flex;align-items:center;gap:8px}
+.qtybtn{
+  width:30px;height: 28px;
+  border-radius:8px;
+  border:none;
+  background:#eef2f7;
+  cursor:pointer;
+  font-weight:900;
+  font-size:18px;
+}
+.qtyval{
+  width:35px;height:32px;
+  border-radius:8px;
+  border:none;
+  background:#eef2f7;
+  font-weight:900;
+  text-align:center;
+}
+
+/* ------------------- Accordions ------------------- */
+.acc{
+  margin-top:14px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+}
+.acc-head{
+  padding:16px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.acc-head h3{
+  font-size:22px;
+  color:#ef4444;
+  font-weight:900;
+}
+.acc-body{
+  display:none;
+  padding:0 16px 16px;
+}
+.acc-body.show{display:block}
+.acc-body ul{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.acc-body li{list-style:none;font-size:15px;font-weight:800}
+.note{color:#0f172a;font-weight:700}
+
+/* Similar products */
+.similar{
+  margin-top:22px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:16px;
+}
+.sim-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.similar h2{
+  font-size:34px;
+  font-weight:900;
+  color:#0f172a;
+}
+.viewall{
+  background:#64748b;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:900;
+  font-size:13px;
+}
+.sim-row{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.sim-card{
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+.sim-card img{width:100%;height:210px;object-fit:contain;display:block}
+.sim-body{padding:12px}
+.sim-name{font-size:16px;color:#334155;font-weight:700;min-height:44px}
+.sim-price-row{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.sim-price{font-weight:900;color:#0f172a}
+.sim-book{
+  padding:10px 14px;
+  border-radius:999px;
+  background:#ef4444;
+  color:#fff;
+  font-weight:900;
+  border:none;
+  cursor:pointer;
+}
+
+/* ===== PRODUCT STYLE IMAGE PREVIEW MODAL ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.55);
+  backdrop-filter: blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+  padding:20px;
+}
+.modal.show{display:flex}
+
+.modal-box{
+  position:relative;
+  width:min(760px, 95vw);
+  background:#ffffff;
+  border-radius:20px;
+  box-shadow:0 25px 60px rgba(0,0,0,.35);
+  padding:18px;
+  animation: zoomIn .25s ease;
+}
+
+@keyframes zoomIn{
+  from{transform:scale(.92); opacity:0}
+  to{transform:scale(1); opacity:1}
+}
+
+.modal-box img{
+  width:100%;
+  max-height:70vh;
+  object-fit:contain;
+  border-radius:14px;
+}
+
+.modal-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:#111827;
+  color:#fff;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
+}
+.modal-close:hover{
+  background:#ef4444;
+}
+
+/* Responsive */
+@media(max-width:1000px){
+  .top-grid{grid-template-columns:1fr}
+  .left-sticky{position:static}
+  .sim-row{grid-template-columns:repeat(2,1fr)}
+  .addon-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .nav-center{display:none}
+  .brand{width:70px;height:46px}
+  .brand img{transform:scale(1.85)}
+  .similar h2{font-size:26px}
+  .book-btn{width:100%}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="nav-left">
+      <div class="menu-icon" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+      <a href="/home" class="brand">
+        <img src="{{ url_for('static', filename='images/logo3.png') }}" alt="MomentsMaker Logo">
+      </a>
+    </div>
+
+    <nav class="nav-center">
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/about">About Us</a></li>
+      
+      </ul>
+    </nav>
+
+    {% if session.get("user") %}
+      <a href="/logout" class="login-btn">Logout</a>
+    {% else %}
+      <a href="/login" class="login-btn">Login</a>
+    {% endif %}
+  </div>
+</header>
+
+{% if session.get("user") %}
+<div class="side-menu" id="sideMenu">
+  <a class="menu-item" href="/account#profile">
+  <span class="left"><i class="fa-solid fa-user-circle"></i> Profile</span>
+</a>
+
+<a class="menu-item" href="/account#security">
+  <span class="left"><i class="fa-solid fa-key"></i> Change Password</span>
+</a>
+
+   <a class="menu-item" href="/booking-history">
+  <span class="left">
+    <i class="fa-solid fa-calendar-check"></i>Booking History
+  </span>
+</a>
+
+
+  <div class="menu-item" onclick="toggleSub()">
+    <span class="left"><i class="fa-solid fa-images"></i>Gallery</span>
+    <i class="fa-solid fa-chevron-down menu-arrow" id="galleryArrow"></i>
+  </div>
+
+  <ul class="sub-menu" id="galleryMenu">
+    <li onclick="goGalleryFilter('wedding')">Wedding Decoration</li>
+    <li onclick="goGalleryFilter('birthday')">Birthday Decoration</li>
+    <li onclick="goGalleryFilter('anniversary')">Anniversary Decoration</li>
+    <li onclick="goGalleryFilter('engagement')">Engagement Decoration</li>
+    <li onclick="goGalleryFilter('haldi')">Haldi Decoration</li>
+    <li onclick="goGalleryFilter('babyshower')">Baby Shower</li>
+    <li onclick="goGalleryFilter('welcomebaby')">Welcome Baby</li>
+    <li onclick="goGalleryFilter('nc')">Naming Ceremony</li>
+    <li onclick="goGalleryFilter('festival')">Festival Decoration</li>
+  </ul>
+
+  <a class="menu-item" href="/support">
+    <span class="left"><i class="fa-solid fa-headset"></i>Help & Support</span>
+  </a>
+</div>
+{% endif %}
+
+<div class="spacer"></div>
+
+<main class="page container">
+
+
+  <section class="top-grid">
+
+    <!-- LEFT sticky image -->
+    <div class="left-sticky">
+      <div class="img-card">
+        <div class="img-main" id="imgMain">
+         <img id="mainImg"
+  src="{{ url_for('static', filename=theme.images[0]) }}"
+  onclick="openImage(this.src)"
+  style="cursor: zoom-in;"
+>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <aside>
+
+      <div class="title">{{ theme.name }}</div>
+      <div class="price">₹ <span id="basePrice">{{ theme.price }}</span></div>
+
+      <div class="bookbar">
+        <button class="book-btn" id="bookBtn">Book Now</button>
+      </div>
+
+      <!-- ✅ ADD-ONS -->
+      <div class="addons" id="addonsBox">
+        <div class="addon-top">
+          <div class="addon-tabs">
+            <div class="addon-tab active" id="tabAddons">Add-Ons</div>
+          </div>
+        </div>
+
+        <div class="cat-wrapper">
+          <button class="cat-prev" id="catPrevBtn" title="Prev">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <div class="cat-row" id="catRow"></div>
+
+          <button class="cat-next" id="catNextBtn" title="Next">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="addon-grid" id="addonGrid"></div>
+      </div>
+
+      <!-- Things to Remember -->
+      <div class="acc">
+        <div class="acc-head" onclick="toggleAcc('rememberAcc')">
+          <h3>Things to Remember</h3>
+          <i class="fa-solid fa-chevron-down" style="color:#111827;font-size:18px;"></i>
+        </div>
+        <div class="acc-body" id="rememberAcc">
+          <ul>
+            {% if theme.things_to_remember %}
+              {% for r in theme.things_to_remember %}
+                <li class="note">• {{ r }}</li>
+              {% endfor %}
+            {% else %}
+              <li class="note">•Except balloons, all the items in the inclusions are on rental purpose 
+                and  MomentsMaker team will collect within 48 hours after the event.</li>
+              <li class="note">• A consistent power supply is essential for timely service completion,
+                 and MomentsMaker is not responsible for delays caused by power interruptions.</li>
+              <li class="note">• Customer need to provide a stool or a ladder to complete the decoration in time if needed.</li>
+
+              <li class="note">• MomentsMaker team will not clean the party place after completion of the decoration.</li>
+              <li class="note">• Ensure rental items are returned in their original condition, as clients are responsible 
+                for any missing or damaged items incurred during use, and it is chargeable based on the item damaged or missed.</li>
+
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+    </aside>
+  </section>
+
+  <!-- ✅ SIMILAR PRODUCTS END -->
+  <section class="similar">
+    <div class="sim-head">
+      <h2>Similar Products</h2>
+      <a href="/gallery#filter={{ theme.category }}" class="viewall">View All</a>
+    </div>
+
+    <div class="sim-row">
+      {% for p in related %}
+      <div class="sim-card">
+        <a href="/theme/{{ p.id }}">
+          <img src="{{ p.images[0] if 'static/' in p.images[0] else url_for('static', filename=p.images[0]) }}" alt="">
+        </a>
+        <div class="sim-body">
+          <div class="sim-name">{{ p.name }}</div>
+          <div class="sim-price-row">
+            <div class="sim-price">₹ {{ p.price }}</div>
+            <a href="/theme/{{ p.id }}"><button class="sim-book">Book Now</button></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</main>
+
+<!-- IMAGE MODAL -->
+<div class="modal" id="imgModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <img id="modalImg" src="" alt="Preview">
+  </div>
+</div>
+
+
+<script>
+const STATIC_BASE = "/static/";
+const THEME_ID = "{{ theme.id }}";
+
+let ADDONS = {};
+let activeCat = "";
+let selected = {};
+
+const catRow = document.getElementById("catRow");
+const addonGrid = document.getElementById("addonGrid");
+const addonsBox = document.getElementById("addonsBox");
+const prevBtn = document.getElementById("catPrevBtn");
+const nextBtn = document.getElementById("catNextBtn");
+
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+const galleryMenu = document.getElementById("galleryMenu");
+const galleryArrow = document.getElementById("galleryArrow");
+
+/* 🔹 SIDEMENU TOGGLE */
+if (menuBtn && sideMenu) {
+  menuBtn.addEventListener("click", () => {
+    sideMenu.classList.toggle("active");
+  });
+}
+
+/* 🔹 GALLERY DROPDOWN TOGGLE */
+function toggleSub() {
+  if (!galleryMenu || !galleryArrow) return;
+
+  const isOpen = galleryMenu.style.display === "block";
+
+  galleryMenu.style.display = isOpen ? "none" : "block";
+  galleryArrow.classList.toggle("rotate", !isOpen);
+}
+
+/* ================= IMAGE MODAL ================= */
+const imgModal = document.getElementById("imgModal");
+const modalImg = document.getElementById("modalImg");
+const modalClose = document.getElementById("modalClose");
+
+function openImage(src){
+  modalImg.src = src;
+  imgModal.classList.add("show");
+}
+
+modalClose.onclick = () => {
+  imgModal.classList.remove("show");
+  modalImg.src = "";
+};
+
+imgModal.onclick = (e) => {
+  if (e.target === imgModal) {
+    imgModal.classList.remove("show");
+    modalImg.src = "";
+  }
+};
+function toggleAcc(id){
+  const body = document.getElementById(id);
+  if(!body) return;
+
+  body.classList.toggle("show");
+}
+
+/* ================= LOAD ADDONS ================= */
+async function loadAddons(){
+  const res = await fetch(`/api/theme/${THEME_ID}/addons`);
+  ADDONS = await res.json();
+
+  console.log("ADDONS RAW:", ADDONS);
+
+  const cats = Object.keys(ADDONS);
+  if (cats.length === 0) return;
+
+  activeCat = cats[0];   // ✅ FORCE SET
+  renderCats();
+  renderCards();         // ✅ NOW SAFE
+}
+
+/* ================= CATEGORY PILLS ================= */
+function renderCats(){
+  catRow.innerHTML = "";
+  Object.keys(ADDONS).forEach(cat=>{
+    const btn = document.createElement("button");
+    btn.className = "pill" + (cat === activeCat ? " active" : "");
+    btn.textContent = cat;
+    btn.onclick = ()=>{
+      activeCat = cat;
+      renderCats();
+      renderCards();
+    };
+    catRow.appendChild(btn);
+  });
+}
+
+/* ================= ADDON CARDS ================= */
+function qtyOf(id){
+  return selected[id]?.qty || 0;
+}
+
+function addItemById(id){
+  const item = ADDONS[activeCat].find(i => i.id === id);
+  if(!item) return;
+
+  if(!selected[id]){
+    selected[id] = { ...item, qty: 0 };
+  }
+  selected[id].qty++;
+  renderCards();
+}
+
+function removeItemById(id){
+  if(!selected[id]) return;
+
+  selected[id].qty--;
+  if(selected[id].qty <= 0){
+    delete selected[id];
+  }
+  renderCards();
+}
+
+
+function renderCards(){
+  addonGrid.innerHTML = "";
+
+  const items = ADDONS[activeCat];
+  if (!items) return;
+
+  items.forEach(item => {
+    const imgPath = item.image;
+    if (!imgPath) return;
+
+    const qty = selected[item.id]?.qty || 0;
+
+    const card = document.createElement("div");
+    card.className = "addon-card";
+
+    card.innerHTML = `
+  <div class="addon-img">
+    <img 
+      src="/static/${imgPath}" 
+      onclick="openImage('/static/${imgPath}')">
+  </div>
+
+  <div class="addon-name">${item.name}</div>
+
+  <div class="addon-bottom">
+    <div class="addon-price">₹${item.price}</div>
+
+    <div class="qtybox">
+      <button class="qtybtn" onclick="removeItemById('${item.id}')">−</button>
+      <input class="qtyval" value="${qty}" readonly>
+      <button class="qtybtn" onclick="addItemById('${item.id}')">+</button>
+    </div>
+  </div>
+`;
+
+
+    addonGrid.appendChild(card);
+  });
+}
+
+
+
+/* ================= CATEGORY SCROLL ARROWS ================= */
+function updateCatArrows(){
+  if(catRow.scrollWidth > catRow.clientWidth){
+    nextBtn.style.display = "flex";
+  }
+}
+
+prevBtn.onclick = ()=>{
+  catRow.scrollBy({left:-150, behavior:"smooth"});
+};
+nextBtn.onclick = ()=>{
+  catRow.scrollBy({left:150, behavior:"smooth"});
+};
+
+/* ================= BOOKING ================= */
+document.getElementById("bookBtn").onclick = ()=>{
+  const encoded = encodeURIComponent(JSON.stringify(Object.values(selected)));
+  window.location.href = `/booking/${THEME_ID}?addons_data=${encoded}`;
+};
+
+loadAddons();
+</script>
+
+
+</body>
+</html>

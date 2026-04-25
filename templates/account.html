@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account | MomentsMaker</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box}
+body{
+  font-family:Arial,sans-serif;
+  margin:0;
+  background:#f8fafc;
+  color:#0f172a;
+}
+
+.container{
+  max-width:1000px;
+  margin:60px auto;
+  padding:20px;
+}
+
+.section{display:none}
+.section.active{display:block}
+
+.card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:22px;
+  padding:30px;
+  margin-bottom:20px;
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:15px;
+  border:1px solid #cbd5e1;
+  border-radius:15px;
+  margin-bottom:15px;
+}
+
+.btn{
+  padding:14px 24px;
+  border:none;
+  border-radius:999px;
+  background:#2563eb;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:22px;
+  margin-bottom:20px;
+}
+
+.avatar{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid #e2e8f0;
+  cursor:pointer;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+#profileImage{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- PROFILE SECTION -->
+<section id="profile" class="section active">
+  <h2><i class="fa-solid fa-user"></i> Profile</h2>
+
+  <div class="card">
+    <div class="profile-head">
+      <div class="avatar" id="avatarBtn">
+        <img id="profilePreview" src="https://via.placeholder.com/120">
+      </div>
+      <input type="file" id="profileImage" accept="image/*">
+    </div>
+
+    <input id="profileName" placeholder="Name">
+    <input id="profileEmail" placeholder="Email">
+    <input id="profileMobile" placeholder="Mobile">
+
+    <button id="saveProfileBtn" class="btn">Save Profile</button>
+  </div>
+</section>
+
+
+<!-- CHANGE PASSWORD SECTION -->
+<section id="security" class="section">
+  <h2><i class="fa-solid fa-shield-halved"></i> Change Password</h2>
+
+  <div class="card">
+    <input type="password" id="currentPass" placeholder="Current Password">
+    <input type="password" id="newPass" placeholder="New Password">
+    <input type="password" id="confirmPass" placeholder="Confirm Password">
+    <button id="updatePassBtn" class="btn">Update Password</button>
+  </div>
+</section>
+
+</div>
+
+
+<script>
+
+/* ===== TAB ACTIVATION FROM URL HASH ===== */
+function activateTab(tabId){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  const section = document.getElementById(tabId);
+  if(section){
+    section.classList.add("active");
+  }
+}
+
+if(window.location.hash){
+  const tab = window.location.hash.replace("#","");
+  activateTab(tab);
+}
+
+
+/* ===== IMAGE PREVIEW ===== */
+avatarBtn.onclick = ()=> profileImage.click();
+
+profileImage.onchange = e=>{
+  if(e.target.files[0]){
+    profilePreview.src = URL.createObjectURL(e.target.files[0]);
+  }
+};
+
+
+/* ===== LOAD PROFILE DATA ===== */
+async function loadProfileData(){
+  const res = await fetch("/api/account-data");
+  const data = await res.json();
+  if(!data.ok) return;
+
+  profileName.value = data.profile?.name || "";
+  profileEmail.value = data.profile?.email || "";
+  profileMobile.value = data.profile?.mobile || "";
+
+  if(data.profile?.profile_photo){
+    profilePreview.src = data.profile.profile_photo;
+  }
+}
+loadProfileData();
+
+
+/* ===== SAVE PROFILE ===== */
+saveProfileBtn.onclick = async ()=>{
+  const fd = new FormData();
+  fd.append("name", profileName.value);
+  fd.append("email", profileEmail.value);
+  fd.append("mobile", profileMobile.value);
+  if(profileImage.files[0]) fd.append("photo", profileImage.files[0]);
+
+  const res = await fetch("/api/save-profile",{method:"POST",body:fd});
+  const data = await res.json();
+  alert(data.message);
+};
+
+
+/* ===== UPDATE PASSWORD ===== */
+updatePassBtn.onclick = async ()=>{
+  const res = await fetch("/api/update-password",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      current_password:currentPass.value,
+      new_password:newPass.value,
+      confirm_password:confirmPass.value
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+};
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reset Password | MomentsMaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --text-main:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --accent:#2563eb;
+  --danger:#ef4444;
+  --success:#16a34a;
+}
+
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    radial-gradient(circle at 15% 20%, #c8f7ff 0%, transparent 45%),
+    radial-gradient(circle at 85% 25%, #b98cff 0%, transparent 45%),
+    linear-gradient(135deg,
+      #e6fbff 0%,
+      #8ee7f3 30%,
+      #3b82f6 60%,
+      #a855f7 100%);
+}
+
+.glass-card{
+  width:min(420px,90vw);
+  padding:34px 30px;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 35px 80px rgba(15,23,42,.25);
+}
+
+h1{
+  text-align:center;
+  font-size:1.8rem;
+  margin-bottom:20px;
+  color:var(--text-main);
+}
+
+.progress{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:24px;
+  position:relative;
+}
+.progress::before{
+  content:"";
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:2px;
+  background:#e5e7eb;
+  transform:translateY(-50%);
+}
+.step-dot{
+  width:30px;height:30px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid #cbd5e1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:600;
+  color:#64748b;
+  z-index:2;
+}
+.step-dot.active{
+  background:#2563eb;
+  border-color:#2563eb;
+  color:#fff;
+}
+.step-dot.done{
+  background:#1e40af;
+  border-color:#1e40af;
+  color:#fff;
+}
+
+.step{display:none}
+.step.active{display:block}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:16px;
+  font-size:.9rem;
+}
+
+.input-wrap{
+  display:flex;
+  align-items:center;
+  background:#f8fafc;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:0 12px;
+}
+.input-wrap:focus-within{
+  border-color:#60a5fa;
+  box-shadow:0 0 0 3px rgba(96,165,250,.3);
+  background:#fff;
+}
+
+input{
+  flex:1;
+  border:none;
+  outline:none;
+  background:transparent;
+  padding:12px 6px;
+  font-size:.9rem;
+}
+
+.toggle{
+  cursor:pointer;
+  color:#64748b;
+}
+
+.msg{
+  display:none;
+  font-size:.8rem;
+  padding:10px 12px;
+  border-radius:12px;
+  margin-bottom:14px;
+}
+.msg.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.msg.success{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+
+button{
+  width:100%;
+  border:none;
+  padding:13px 0;
+  border-radius:999px;
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:#fff;
+  font-size:.95rem;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 18px 40px rgba(37,99,235,.4);
+}
+button:disabled{opacity:.7;cursor:not-allowed}
+
+.resend{
+  text-align:center;
+  font-size:.8rem;
+  margin-top:10px;
+  color:var(--muted);
+}
+.resend a{color:var(--accent);font-weight:600;cursor:pointer}
+
+.success-icon{
+  font-size:60px;
+  color:#22c55e;
+  text-align:center;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="glass-card">
+
+<h1>Account Recovery</h1>
+
+<div class="progress">
+  <div class="step-dot active">1</div>
+  <div class="step-dot">2</div>
+  <div class="step-dot">3</div>
+  <div class="step-dot">4</div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step active" id="s1">
+  <div class="field">
+    <label>Email</label>
+    <div class="input-wrap">
+      <input id="email" type="email" placeholder="Enter your email">
+    </div>
+  </div>
+  <div id="emailMsg" class="msg"></div>
+  <button onclick="sendOTP(this)">Send OTP</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="s2">
+  <div class="field">
+    <label>OTP</label>
+    <div class="input-wrap">
+      <input id="otp" maxlength="6" placeholder="Enter OTP">
+    </div>
+  </div>
+  <div id="otpMsg" class="msg error" style="display:none;">
+  Invalid or expired OTP
+</div>
+
+  <button onclick="verifyOTP()">Verify</button>
+  <div class="resend">Didn’t get OTP? <a onclick="sendOTP()">Resend</a></div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="s3">
+  <div class="field">
+    <label>New Password</label>
+    <div class="input-wrap">
+      <input id="p1" type="password">
+      <i class="fa-solid fa-eye toggle" onclick="toggle('p1',this)"></i>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Confirm Password</label>
+    <div class="input-wrap">
+      <input id="p2" type="password">
+      <i class="fa-solid fa-eye toggle" onclick="toggle('p2',this)"></i>
+    </div>
+  </div>
+
+  <div id="passMsg" class="msg error" style="display:none;">
+  Passwords do not match
+</div>
+
+  <button onclick="resetPassword()">Reset Password</button>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="s4">
+  <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+  <div class="msg success" style="display:block;text-align:center">
+    Password reset successfully
+  </div>
+  <button onclick="location.href='/login'">Go to Login</button>
+</div>
+
+</div>
+
+<script>
+let step=1,email="";
+
+function show(n){
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+  document.getElementById("s"+n).classList.add("active");
+  document.querySelectorAll(".step-dot").forEach((d,i)=>{
+    d.classList.remove("active","done");
+    if(i+1<n)d.classList.add("done");
+    if(i+1===n)d.classList.add("active");
+  });
+  step=n;
+}
+
+async function sendOTP(btn){
+  email=document.getElementById("email").value.trim();
+  const m=document.getElementById("emailMsg");
+  if(!email){m.textContent="Email required";m.className="msg error";return}
+
+  if(btn){btn.disabled=true;btn.textContent="Sending..."}
+
+  const r=await fetch("/api/reset-password/send-otp",{
+    method:"POST",
+    credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email})
+  });
+
+  if(btn){btn.disabled=false;btn.textContent="Send OTP"}
+
+  if(!r.ok){m.textContent="Email not registered";m.className="msg error";return}
+
+  m.textContent="OTP sent successfully";m.className="msg success";
+  setTimeout(()=>show(2),700);
+}
+
+async function verifyOTP(){
+  const otp = document.getElementById("otp").value.trim();
+  const msg = document.getElementById("otpMsg");
+
+  msg.style.display = "none";
+
+  if(!otp){
+    msg.textContent = "OTP required";
+    msg.style.display = "block";
+    return;
+  }
+
+  const res = await fetch("/api/reset-password/verify-otp",{
+    method:"POST",
+    credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email, otp})
+  });
+
+  if(!res.ok){
+    msg.textContent = "Invalid or expired OTP";
+    msg.style.display = "block";
+    return;
+  }
+
+  show(3); // go to password step
+}
+
+
+
+async function resetPassword(){
+  const p1 = document.getElementById("p1").value;
+  const p2 = document.getElementById("p2").value;
+  const msg = document.getElementById("passMsg");
+
+  msg.style.display = "none";
+
+  if(p1.length < 6){
+    msg.textContent = "Minimum 6 characters required";
+    msg.style.display = "block";
+    return;
+  }
+
+  if(p1 !== p2){
+    msg.textContent = "Passwords do not match";
+    msg.style.display = "block";
+    return;
+  }
+
+  const res = await fetch("/api/reset-password/confirm",{
+    method:"POST",
+    credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email, password:p1})
+  });
+
+  if(!res.ok){
+    msg.textContent = "Password reset failed";
+    msg.style.display = "block";
+    return;
+  }
+
+  show(4); // success
+}
+
+
+
+function toggle(id,i){
+  const x=document.getElementById(id);
+  x.type=x.type==="password"?"text":"password";
+  i.classList.toggle("fa-eye-slash");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MomentsMaker | Gallery</title>
+
+<link rel="icon" type="image/jpeg" href="static/images/logo2.jpeg">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;background:#f9f9f9;color:#111}a{text-decoration:none;color:inherit}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,.65);z-index:1000}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;position:relative;height:70px}
+.nav-left{display:flex;align-items:center;gap:14px}
+.menu-icon{font-size:1.6rem;color:#e5e7eb;cursor:pointer}
+.brand{height:50px;width:82px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.brand img{height:100%;width:100%;object-fit:cover;transform:scale(1.7);filter:drop-shadow(0 6px 14px rgba(0,0,0,.65))}
+.nav-center{position:absolute;left:50%;transform:translateX(-50%)}
+.nav-center ul{list-style:none;display:flex;gap:22px}
+.nav-center a{color:#fff}
+.nav-center a:hover{color:#ffb703}
+.login-btn{padding:8px 20px;border-radius:22px;background:#2563eb;color:#fff;font-size:.9rem}
+.spacer{height:70px}
+
+/* SIDE MENU */
+.side-menu{position:fixed;top:70px;left:-300px;width:280px;height:calc(100vh - 70px);background:rgba(0,0,0,.65);padding:18px;transition:.35s ease;z-index:1500}
+.side-menu.active{left:0}
+.menu-item{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:12px;cursor:pointer;color:#e5e7eb}
+.menu-item i{color:#ffb703;width:18px}
+.menu-item:hover{background:rgba(255,255,255,.1)}
+.sub-menu{padding-left:38px;display:none}
+.sub-menu li{padding:8px 0;cursor:pointer;color:#cbd5e1}
+.sub-menu li:hover{color:#ffb703}
+
+/* PAGE */
+.page-title{text-align:center;padding:35px 20px}
+.filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.filter-btn{padding:6px 16px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer}
+.filter-btn.active{background:#111;color:#fff}
+
+/* GALLERY */
+.gallery{max-width:1100px;margin:30px auto;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.card{background:#fff;border-radius:14px;border:1px solid #e5e7eb;display:flex;flex-direction:column;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.08)}
+.card img{height:220px;object-fit:contain;background:#f1f5f9;padding:6px}
+.card-info{padding:12px;flex:1;display:flex;flex-direction:column}
+.card-info h4{font-size:14px}
+.card-info p{font-size:12px;color:#666}
+.book-btn{margin-top:auto;padding:10px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffb703,#ffd1dc);font-weight:700;cursor:pointer}
+
+/* FOOTER */
+footer{background:#020617;color:#94a3b8;padding:20px 15px;text-align:center;font-size:.85rem}
+footer span{color:#ffb703;font-weight:600}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="nav-left">
+      <div class="menu-icon" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+      <a href="/home" class="brand">
+        <img src="static/images/logo3.png">
+      </a>
+    </div>
+
+    <nav class="nav-center">
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/about">About Us</a></li>
+      
+      </ul>
+    </nav>
+
+    {% if session.get("user") %}
+      <a href="/logout" class="login-btn">Logout</a>
+    {% else %}
+      <a href="/login" class="login-btn">Login</a>
+    {% endif %}
+  </div>
+</header>
+
+{% if session.get("user") %}
+<div class="side-menu" id="sideMenu">
+  <a class="menu-item" href="/account#profile">
+  <i class="fa-solid fa-user-circle"></i> Profile
+</a>
+
+<a class="menu-item" href="/account#security">
+  <i class="fa-solid fa-key"></i> Change Password
+</a>
+
+  <a class="menu-item" href="/booking-history">
+    <i class="fa-solid fa-calendar-check"></i>Booking History
+  </a>
+
+  <div class="menu-item" onclick="toggleSub()">
+    <i class="fa-solid fa-images"></i>Gallery
+  </div>
+
+  <ul class="sub-menu" id="galleryMenu">
+    <li onclick="openGalleryFilter('wedding')">Wedding</li>
+    <li onclick="openGalleryFilter('birthday')">Birthday</li>
+    <li onclick="openGalleryFilter('anniversary')">Anniversary</li>
+    <li onclick="openGalleryFilter('engagement')">Engagement</li>
+    <li onclick="openGalleryFilter('haldi')">Haldi</li>
+    <li onclick="openGalleryFilter('babyshower')">Baby Shower</li>
+    <li onclick="openGalleryFilter('welcomebaby')">Welcome Baby</li>
+     <li onclick="openGalleryFilter('nc')">Naming Ceremony</li>
+    <li onclick="openGalleryFilter('festival')">Festival</li>
+  </ul>
+
+  <a class="menu-item" href="/support">
+    <i class="fa-solid fa-headset"></i>Help & Support
+  </a>
+</div>
+{% endif %}
+
+<div class="spacer"></div>
+
+<section class="page-title">
+  <h1>Decoration Gallery</h1><br><br>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="birthday">Birthday</button>
+    <button class="filter-btn" data-filter="wedding">Wedding</button>
+    <button class="filter-btn" data-filter="anniversary">Anniversary</button>
+    <button class="filter-btn" data-filter="engagement">Engagement</button>
+    <button class="filter-btn" data-filter="haldi">Haldi</button>
+    <button class="filter-btn" data-filter="babyshower">Baby Shower</button>
+    <button class="filter-btn" data-filter="welcomebaby">Welcome Baby</button>
+    <button class="filter-btn" data-filter="nc">Naming Ceremony</button>
+    <button class="filter-btn" data-filter="festival">Festival</button>
+  </div>
+</section>
+
+<section class="gallery" id="gallery"></section>
+
+<footer>
+  © 2026 <span>MomentsMaker</span> · Event Decoration Specialists
+</footer>
+
+<script>
+const isLoggedIn = {{ 'true' if session.get("user") else 'false' }};
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+const galleryMenu = document.getElementById("galleryMenu");
+
+menuBtn.onclick = ()=>{
+  if(!isLoggedIn) return;
+  if(sideMenu) sideMenu.classList.toggle("active");
+};
+
+function toggleSub(){
+  if(!galleryMenu) return;
+  galleryMenu.style.display =
+    galleryMenu.style.display==="block"?"none":"block";
+}
+
+function openGalleryFilter(filter){
+  if(sideMenu) sideMenu.classList.remove("active");
+  window.location.hash = `filter=${filter}`;
+  applyFilter(filter);
+}
+
+/* LOAD FROM DB */
+async function loadGallery(){
+  const res = await fetch("/api/admin/themes");
+  const themes = await res.json();
+  const gallery = document.getElementById("gallery");
+
+  gallery.innerHTML = themes.map(t=>`
+    <div class="card" data-category="${t.category}"
+      onclick="openTheme('${t.id}','${t.name}',${t.price},'/static/${t.image}')">
+      <img src="/static/${t.image}">
+      <div class="card-info">
+        <h4>${t.name}</h4>
+        <h5> ₹${t.price}</h5>
+        <button class="book-btn">Book Now</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function openTheme(id,name,price,image){
+  localStorage.setItem("mm_selected",JSON.stringify({
+    themeId:id,themeName:name,price,image
+  }));
+  window.location.href=`/theme/${id}`;
+}
+
+/* FILTER */
+const buttons=document.querySelectorAll(".filter-btn");
+function applyFilter(f){
+  buttons.forEach(b=>b.classList.remove("active"));
+  document.querySelector(`.filter-btn[data-filter="${f}"]`)?.classList.add("active");
+
+  document.querySelectorAll(".card").forEach(c=>{
+    c.style.display = (f==="all"||c.dataset.category===f)?"flex":"none";
+  });
+}
+
+buttons.forEach(b=>{
+  b.onclick=()=>{
+    applyFilter(b.dataset.filter);
+  };
+});
+
+window.onload = async ()=>{
+
+  await loadGallery();   // ⬅ wait until cards load
+
+  if(location.hash.startsWith("#filter=")){
+    const category = location.hash.replace("#filter=","");
+    applyFilter(category);
+  }
+
+};
+
+</script>
+
+</body>
+</html>

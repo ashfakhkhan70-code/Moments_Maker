@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About Us | MomentsMaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --text:#0f172a;
+  --muted:#64748b;
+  --accent:#2563eb;
+}
+
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 20%, #c8f7ff 0%, transparent 45%),
+    radial-gradient(circle at 85% 25%, #b98cff 0%, transparent 45%),
+    linear-gradient(135deg,#e6fbff 0%,#8ee7f3 30%,#3b82f6 60%,#a855f7 100%);
+  padding:40px 16px;
+  color:var(--text);
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+}
+
+.card{
+  background:#ffffff;
+  border-radius:26px;
+  padding:56px 44px;
+  box-shadow:0 35px 80px rgba(15,23,42,.25);
+}
+
+/* HERO */
+.hero{
+  text-align:center;
+  margin-bottom:46px;
+}
+.hero h1{
+  font-size:2.5rem;
+  font-weight:700;
+  margin-bottom:14px;
+}
+.hero p{
+  font-size:1.05rem;
+  color:var(--muted);
+  max-width:720px;
+  margin:auto;
+}
+
+/* SECTION */
+.section{
+  margin-top:46px;
+}
+.section h2{
+  font-size:1.65rem;
+  margin-bottom:16px;
+}
+.section p{
+  font-size:.95rem;
+  line-height:1.8;
+  color:#334155;
+  max-width:840px;
+}
+
+/* HIGHLIGHTS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:24px;
+  margin-top:30px;
+}
+
+.box{
+  background:#f8fafc;
+  border-radius:22px;
+  padding:30px 24px;
+  transition:.35s;
+}
+.box:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 45px rgba(37,99,235,.25);
+}
+.box h3{
+  font-size:1.1rem;
+  margin-bottom:10px;
+  color:var(--accent);
+}
+.box p{
+  font-size:.85rem;
+  color:#475569;
+  line-height:1.6;
+}
+
+/* CTA */
+.cta{
+  margin-top:60px;
+  text-align:center;
+}
+.cta h2{
+  font-size:1.9rem;
+  margin-bottom:14px;
+}
+.cta p{
+  font-size:.95rem;
+  color:#475569;
+  margin-bottom:26px;
+}
+.cta a{
+  display:inline-block;
+  padding:15px 38px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  box-shadow:0 18px 40px rgba(37,99,235,.45);
+}
+.cta a:hover{
+  transform:translateY(-2px);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1>About MomentsMaker</h1>
+      <p>
+        MomentsMaker is a specialized event decoration studio focused on creating
+        elegant, stylish, and memorable decorative setups for your special occasions.
+      </p>
+    </div>
+
+    <!-- WHO WE ARE -->
+    <div class="section">
+      <h2>Who We Are</h2>
+      <p>
+        We are a dedicated decoration team with a passion for transforming empty
+        spaces into visually stunning environments. Our work is centered purely
+        around decoration — from concept design to final setup — ensuring every
+        detail reflects elegance, balance, and creativity.
+      </p>
+    </div>
+
+    <!-- WHAT WE SPECIALIZE IN -->
+    <div class="section">
+      <h2>Our Decoration Expertise</h2>
+      <div class="grid">
+        <div class="box">
+          <h3>🎈 Theme Decorations</h3>
+          <p>
+            Carefully curated theme-based decorations tailored to your event style
+            and preferences.
+          </p>
+        </div>
+
+        <div class="box">
+          <h3>🌸 Floral Styling</h3>
+          <p>
+            Premium artificial and fresh floral arrangements for stages,
+            entrances, and backdrops.
+          </p>
+        </div>
+
+        <div class="box">
+          <h3>✨ Lighting & Ambience</h3>
+          <p>
+            Soft, elegant lighting setups that enhance mood and highlight
+            decorative elements.
+          </p>
+        </div>
+
+        <div class="box">
+          <h3>🖼 Customized Decor Elements</h3>
+          <p>
+            Welcome boards, arches, panels, props, and aesthetic decor pieces
+            designed for visual impact.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHY US -->
+    <div class="section">
+      <h2>Why Choose MomentsMaker</h2>
+      <p>
+        Our approach is simple — quality over quantity. We focus on clean execution,
+        premium materials, and refined design rather than overcrowded setups.
+        Every decoration is planned with precision, professionalism, and attention
+        to detail.
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta">
+      <h2>Designed to Impress</h2>
+      <p>
+        If you’re looking for tasteful, professional, and well-executed decorations,
+        MomentsMaker is here to elevate your event space.
+      </p>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

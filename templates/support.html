@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MomentsMaker | Help & Support</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f5f7fb;color:#111}
+
+.container{max-width:900px;margin:40px auto;padding:20px}
+
+h1{font-size:22px;margin-bottom:10px}
+.subtitle{color:#666;margin-bottom:25px}
+
+.card{
+  background:#fff;border-radius:16px;border:1px solid #e5e7eb;
+  margin-bottom:12px;padding:18px;cursor:pointer;transition:.2s
+}
+.card:hover{background:#f9fafb;transform:translateY(-2px)}
+.card b{display:block;font-size:15px}
+
+.screen{display:none}
+.screen.active{display:block}
+
+.form-box{
+  background:#fff;border:1px solid #e5e7eb;
+  border-radius:16px;padding:20px
+}
+
+label{font-size:13px;display:block;margin-top:12px;margin-bottom:6px;color:#555}
+input, select, textarea{
+  width:100%;padding:12px;border:1px solid #ddd;
+  border-radius:12px;font-size:14px
+}
+textarea{resize:none;height:120px}
+
+button{
+  margin-top:18px;padding:12px;border:none;
+  border-radius:12px;cursor:pointer;font-weight:bold
+}
+.primary{background:#2563eb;color:#fff}
+.dark{background:#111;color:#fff}
+
+.status-box{
+  margin-top:20px;padding:15px;border-radius:12px;
+  border:1px solid #ddd;display:none
+}
+
+.badge{
+  display:inline-block;padding:6px 12px;
+  border-radius:20px;font-size:12px;
+  font-weight:bold;margin-top:8px
+}
+.pending{background:#fef3c7;color:#92400e}
+.progress{background:#e0e7ff;color:#3730a3}
+.resolved{background:#dcfce7;color:#166534}
+
+.back{margin-bottom:20px;cursor:pointer;font-size:14px;color:#2563eb}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="homeScreen" class="screen active">
+  <h1>Help & Support</h1>
+  <p class="subtitle">Choose category → Select issue → Raise concern</p>
+  <div id="categoryList"></div>
+  <button class="dark" onclick="openTrack()">Track Concern Status</button>
+</div>
+
+<!-- SUB CATEGORY -->
+<div id="subScreen" class="screen">
+  <div class="back" onclick="goHome()">← Back</div>
+  <h1 id="subTitle"></h1>
+  <div id="subList"></div>
+</div>
+
+<!-- RAISE -->
+<div id="raiseScreen" class="screen">
+  <div class="back" onclick="goHome()">← Back</div>
+  <h1>Raise Concern</h1>
+
+  <div class="form-box">
+    <form id="concernForm">
+
+      <label>Full Name</label>
+      <input id="name" required>
+
+      <label>Mobile</label>
+      <input id="phone" required pattern="[0-9]{10}">
+
+      <label>Booking ID (Optional)</label>
+      <input id="bookingId">
+
+      <label>Category</label>
+      <input id="categoryInput" readonly>
+
+      <label>Sub Category</label>
+      <input id="subInput" readonly>
+
+      <label>Description</label>
+      <textarea id="description" maxlength="500" required></textarea>
+
+      <button class="primary" type="submit">Submit Concern</button>
+    </form>
+  </div>
+</div>
+
+<!-- TRACK -->
+<div id="trackScreen" class="screen">
+  <div class="back" onclick="goHome()">← Back</div>
+  <h1>Your Concern Status</h1>
+
+  <button class="dark" onclick="trackConcern()">Check Status</button>
+
+  <div id="statusBox" class="status-box">
+    <b id="statusId"></b>
+    <div id="statusBadge" class="badge"></div>
+    <p id="adminReply"></p>
+    <small id="updatedAt"></small>
+  </div>
+</div>
+
+
+</div>
+
+<script>
+
+/* CATEGORY DATA */
+const DATA = {
+  "Booking & Event Issues": [
+    "Booking confirmation not received",
+    "Wrong event date or time",
+    "Slot not available",
+    "Booking ID not generated"
+  ],
+  "Payment & Invoice Issues": [
+    "Payment deducted but booking not confirmed",
+    "Full payment done but status not updated",
+    "Invoice not downloading"
+  ],
+  "Refund & Cancellation": [
+    "Cancel booking help",
+    "Refund not received",
+    "Reschedule request"
+  ],
+  "Theme & Customization": [
+    "Change theme",
+    "Add / remove add-ons",
+    "Special customization request"
+  ],
+  "Account & Login": [
+    "OTP not received",
+    "Login issue",
+    "Reset password"
+  ],
+  "Technical Problem": [
+    "Website error",
+    "Page not loading"
+  ]
+};
+
+let selectedCategory = "";
+let selectedSub = "";
+
+/* Render Categories */
+const categoryList = document.getElementById("categoryList");
+
+for(let cat in DATA){
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `<b>${cat}</b>`;
+  div.onclick = () => openSub(cat);
+  categoryList.appendChild(div);
+}
+
+function openSub(cat){
+  selectedCategory = cat;
+  homeScreen.classList.remove("active");
+  subScreen.classList.add("active");
+  subTitle.innerText = cat;
+
+  subList.innerHTML = "";
+  DATA[cat].forEach(sub=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<b>${sub}</b>`;
+    div.onclick = () => openRaise(sub);
+    subList.appendChild(div);
+  });
+}
+
+function openRaise(sub){
+  selectedSub = sub;
+  subScreen.classList.remove("active");
+  raiseScreen.classList.add("active");
+
+  document.getElementById("categoryInput").value = selectedCategory;
+  document.getElementById("subInput").value = selectedSub;
+}
+
+function goHome(){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  homeScreen.classList.add("active");
+}
+
+function openTrack(){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  trackScreen.classList.add("active");
+}
+
+/* SUBMIT */
+document.getElementById("concernForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const fullName = document.getElementById("name").value;
+  const phoneNo = document.getElementById("phone").value;
+  const booking = document.getElementById("bookingId").value;
+  const desc = document.getElementById("description").value;
+
+  const res = await fetch("/api/concerns",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      name: fullName,
+      phone: phoneNo,
+      booking_id: booking,
+      category: selectedCategory,
+      sub_category: selectedSub,
+      description: desc
+    })
+  });
+
+  const data = await res.json();
+
+  if(res.ok){
+    alert("Concern Submitted!\nYour ID: "+data.concern_id);
+    document.getElementById("concernForm").reset();
+    goHome();
+  } else {
+    alert("Error submitting concern");
+  }
+});
+
+async function trackConcern(){
+
+  const res = await fetch("/api/my-concerns");
+  const data = await res.json();
+
+  if(!res.ok || data.length === 0){
+    alert("No concerns found");
+    return;
+  }
+
+  const box = document.getElementById("statusBox");
+  box.style.display = "block";
+
+  box.innerHTML = data.map(c => {
+
+    let cls = "pending";
+    if(c.status==="In Progress") cls="progress";
+    if(c.status==="Resolved") cls="resolved";
+
+    return `
+      <div style="border-bottom:1px solid #ddd;padding:10px 0">
+        <b>Concern ID: ${c.concern_id}</b><br>
+        <span class="badge ${cls}">${c.status}</span>
+        <p>${c.admin_reply || "No update yet."}</p>
+       <small>
+  Date:
+  ${
+    c.updated_at
+      ? new Date(c.updated_at).toLocaleString()
+      : new Date(c.created_at).toLocaleString()
+  }
+</small>
+
+
+      </div>
+    `;
+  }).join('');
+}
+
+
+
+</script>
+
+</body>
+</html>

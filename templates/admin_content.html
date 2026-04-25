@@ -1,0 +1,316 @@
+<style>
+.cm-box{
+  background:#fff;
+  border-radius:14px;
+  padding:28px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  margin-bottom:30px;
+}
+.cm-header{
+  font-size:22px;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.cm-form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.cm-form label{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
+}
+.cm-form input,
+.cm-form select{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:14px;
+  background:#fff;
+}
+.cm-actions{
+  grid-column:1 / -1;
+  margin-top:10px;
+  display:flex;
+  gap:12px;
+}
+.btn-save{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.btn-cancel{
+  background:#6b7280;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.btn-edit{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.btn-delete{
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.theme-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.theme-table th,
+.theme-table td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+}
+.theme-table th{
+  background:#f3f4f6;
+  font-weight:600;
+}
+.theme-thumb{
+  width:60px;
+  height:50px;
+  object-fit:cover;
+  border-radius:8px;
+}
+</style>
+
+<div style="display:flex; gap:12px; margin-bottom:20px;">
+  <button id="tabTheme" class="btn-save">Theme</button>
+  <button id="tabAddon" class="btn-cancel">Add-On</button>
+</div>
+
+<div id="contentArea">
+
+  <div id="themeContent">
+
+    <div class="cm-box">
+      <div class="cm-header" id="themeFormTitle">Add New Theme</div><br>
+
+      <form id="themeForm" class="cm-form" enctype="multipart/form-data">
+        <input type="hidden" id="themeId">
+
+        <div>
+          <label>Theme Name</label>
+          <input id="themeName" required>
+        </div>
+
+        <div>
+          <label>Category</label>
+          <select id="themeCategory" required>
+            <option value="">Select</option>
+            <option value="birthday">Birthday</option>
+            <option value="wedding">Wedding</option>
+            <option value="anniversary">Anniversary</option>
+            <option value="engagement">Engagement</option>
+            <option value="haldi">Haldi</option>
+            <option value="babyshower">Baby Shower</option>
+            <option value="welcomebaby">Welcome Baby</option>
+            <option value="naming">Naming Ceremony</option>
+            <option value="festival">Festival</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Price</label>
+          <input id="themePrice" type="number" required>
+        </div>
+
+        <div>
+          <label>Image</label>
+          <input id="themeImage" type="file">
+        </div>
+        <div id="themeImagePreview"
+     style="grid-column:1 / -1; margin-top:10px; display:none;">
+  <label>Current Image</label><br>
+  <img id="themePreviewImg"
+       src=""
+       style="width:120px;height:90px;
+              object-fit:cover;
+              border-radius:8px;
+              border:1px solid #ddd;">
+</div>
+
+
+        <div class="cm-actions">
+          <button class="btn-save">Save Theme</button>
+          <button type="button" class="btn-cancel" onclick="resetThemeForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="cm-box">
+      <div class="cm-header">Existing Themes</div>
+
+      <table class="theme-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="themesGrid"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="toast" style="position:fixed;bottom:30px;right:30px;background:#111827;color:#fff;padding:14px 22px;border-radius:12px;opacity:0;transition:.3s;z-index:9999"></div>
+
+<script>
+let editingThemeId=null;
+
+const themesGrid=document.getElementById("themesGrid");
+const themeForm=document.getElementById("themeForm");
+const contentArea=document.getElementById("contentArea");
+const themeContent=document.getElementById("themeContent");
+
+async function loadAdminThemes(){
+  const r=await fetch("/api/admin/themes");
+  const d=await r.json();
+  themesGrid.innerHTML=d.map(t=>`
+    <tr>
+      <td><img src="/static/${t.image}" class="theme-thumb"></td>
+      <td>${t.name}</td>
+      <td>${t.category}</td>
+      <td>₹${t.price}</td>
+      <td>
+        <button class="btn-edit"
+  onclick='editTheme(
+    ${JSON.stringify(t.id)},
+    ${JSON.stringify(t.name)},
+    ${JSON.stringify(t.category)},
+    ${t.price},
+    ${JSON.stringify(t.image)}
+  )'>
+  Edit
+</button>
+
+        <button class="btn-delete" onclick="deleteTheme('${t.id}')">Delete</button>
+      </td>
+    </tr>`).join("");
+}
+
+function editTheme(id, n, c, p, image){
+  editingThemeId = id;
+
+  themeName.value = n;
+  themeCategory.value = c;
+  themePrice.value = p;
+  themeFormTitle.innerText = "Edit Theme";
+
+  // 🔥 IMAGE PREVIEW
+  if (image) {
+    const preview = document.getElementById("themeImagePreview");
+    const img = document.getElementById("themePreviewImg");
+    img.src = "/static/" + image;
+    preview.style.display = "block";
+  }
+
+  // clear file input (new image optional)
+  themeImage.value = "";
+
+  // 🔥 AUTO SCROLL TO TOP
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+function resetThemeForm(){
+  editingThemeId = null;
+  themeForm.reset();
+  themeFormTitle.innerText = "Add New Theme";
+
+  // 🔥 HIDE IMAGE PREVIEW
+  const preview = document.getElementById("themeImagePreview");
+  const img = document.getElementById("themePreviewImg");
+  if (preview) preview.style.display = "none";
+  if (img) img.src = "";
+}
+
+
+themeForm.onsubmit=async e=>{
+  e.preventDefault();
+  const fd=new FormData();
+  fd.append("name",themeName.value);
+  fd.append("category",themeCategory.value);
+  fd.append("price",themePrice.value);
+  if(themeImage.files[0]) fd.append("image",themeImage.files[0]);
+  await fetch(editingThemeId?`/api/admin/themes/${editingThemeId}`:"/api/admin/themes",{method:editingThemeId?"PUT":"POST",body:fd});
+  showToast("Saved");
+  resetThemeForm();
+  loadAdminThemes();
+};
+
+async function deleteTheme(id){
+  console.log("DELETE CLICKED:", id); // 👈 ADD THIS
+
+  if(!confirm("Delete theme?")) return;
+  await fetch(`/api/admin/themes/${id}`, { method:"DELETE" });
+  loadAdminThemes();
+}
+
+function showToast(t){
+  toast.innerText=t;
+  toast.style.opacity=1;
+  setTimeout(()=>toast.style.opacity=0,2500);
+}
+
+const tabTheme=document.getElementById("tabTheme");
+const tabAddon=document.getElementById("tabAddon");
+
+tabTheme.onclick=()=>{
+  tabTheme.className="btn-save";
+  tabAddon.className="btn-cancel";
+  contentArea.innerHTML="";
+  contentArea.appendChild(themeContent);
+  loadAdminThemes();
+};
+
+tabAddon.onclick = async()=>{
+  console.log("ADDON TAB CLICKED");
+
+  tabAddon.className = "btn-save";
+  tabTheme.className = "btn-cancel";
+
+  const r = await fetch("/admin/add-on-content");
+  const html = await r.text();
+
+  // 1️⃣ Inject HTML
+  contentArea.innerHTML = html;
+
+  // 2️⃣ 🔥 MANUALLY EXECUTE <script> TAGS
+  const scripts = contentArea.querySelectorAll("script");
+  scripts.forEach(s => {
+    const newScript = document.createElement("script");
+    newScript.textContent = s.textContent;
+    document.body.appendChild(newScript);
+    document.body.removeChild(newScript);
+  });
+
+  // 3️⃣ Ab function available hoga
+  initAddonPage();
+};
+
+
+tabTheme.click();
+</script>

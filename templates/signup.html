@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | MomentsMaker</title>
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text-main: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        radial-gradient(circle at 15% 20%, #c8f7ff 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, #b98cff 0%, transparent 45%),
+        linear-gradient(135deg,
+          #e6fbff 0%,
+          #8ee7f3 30%,
+          #3b82f6 60%,
+          #a855f7 100%);
+    }
+
+    .glass-card {
+      width: min(440px, 92vw);
+      padding: 32px 28px;
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 35px 80px rgba(15, 23, 42, 0.25);
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      margin-bottom: 22px;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    .field { display: flex; flex-direction: column; margin-bottom: 14px; }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 0 12px;
+      transition: 0.2s ease;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,.3);
+      background: #ffffff;
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 12px 6px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    input::placeholder { color: #94a3b8; }
+
+    .toggle-password {
+      cursor: pointer;
+      font-size: 1rem;
+      color: #64748b;
+      margin-left: 6px;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .terms-row {
+      display: flex;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .terms-row input { accent-color: var(--accent); margin-top: 2px; }
+
+    .terms-row a { color: var(--accent); text-decoration: none; }
+
+    button {
+      width: 100%;
+      border: none;
+      padding: 13px 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(37,99,235,.4);
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 50px rgba(37,99,235,.55);
+    }
+
+    button:disabled{
+      opacity:.7;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .switch-text {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .switch-text a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .msg{
+      display:none;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:.85rem;
+      margin-bottom:14px;
+    }
+    .msg.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}
+    .msg.success{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
+  </style>
+</head>
+
+<body>
+
+<main class="glass-card">
+  <h1>Create account</h1>
+
+  <div id="msg" class="msg"></div>
+
+  <form id="signupForm">
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input id="name" name="name" type="text" placeholder="Enter your name" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input id="email" name="email" type="email" placeholder="Enter your email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input type="password" id="password" name="password" placeholder="Create password" required>
+        <span class="toggle-password" onclick="togglePwd('password','eye1')">
+          <i class="fa-solid fa-eye" id="eye1"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input type="password" id="confirm" name="confirm" placeholder="Re-enter password" required>
+        <span class="toggle-password" onclick="togglePwd('confirm','eye2')">
+          <i class="fa-solid fa-eye" id="eye2"></i>
+        </span>
+      </div>
+    </div>
+
+    <p class="hint">Use at least 8 characters with a number and symbol.</p>
+
+    <div class="terms-row">
+      <input type="checkbox" id="terms" required>
+      <span>
+        I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+      </span>
+    </div>
+
+    <button id="btn" type="submit">Create account</button>
+
+    <p class="switch-text">
+      Already have an account?
+      <a href="/login">Log in</a>
+    </p>
+
+  </form>
+</main>
+
+<script>
+  function togglePwd(fieldId, iconId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+
+    if (field.type === "password") {
+      field.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      field.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+
+  const form = document.getElementById("signupForm");
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btn");
+
+  function showMessage(text, type){
+    msg.className = "msg " + type;
+    msg.textContent = text;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.className = "msg";
+    msg.textContent = "";
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+
+    if(password.length < 8){
+      showMessage("Password must be at least 8 characters", "error");
+      return;
+    }
+
+    if(password !== confirm){
+      showMessage("Passwords do not match", "error");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Creating...";
+
+    try{
+      const res = await fetch("/api/signup",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ name, email, password, confirm })
+      });
+
+      const out = await res.json();
+
+      if(!res.ok){
+        showMessage(out.message || "Signup failed", "error");
+        btn.disabled = false;
+        btn.textContent = "Create account";
+        return;
+      }
+
+      showMessage(out.message || "Account created ✅", "success");
+
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 900);
+
+    }catch(err){
+      showMessage("Server not running / network error", "error");
+    }finally{
+      btn.disabled = false;
+      btn.textContent = "Create account";
+    }
+  });
+</script>
+
+</body>
+</html>

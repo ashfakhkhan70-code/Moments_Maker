@@ -1,0 +1,297 @@
+<style>
+.cm-box{
+  background:#fff;
+  border-radius:14px;
+  padding:28px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  margin-bottom:30px;
+}
+.cm-header{
+  font-size:22px;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.cm-form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.cm-form label{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
+}
+.cm-form input,
+.cm-form select{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:14px;
+  background:#fff;
+}
+.cm-actions{
+  grid-column:1 / -1;
+  margin-top:10px;
+  display:flex;
+  gap:12px;
+}
+.btn-save{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.btn-cancel{
+  background:#6b7280;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.btn-edit{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.btn-delete{
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.theme-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.theme-table th,
+.theme-table td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+}
+.theme-table th{
+  background:#f3f4f6;
+  font-weight:600;
+}
+.theme-thumb{
+  width:60px;
+  height:50px;
+  object-fit:cover;
+  border-radius:8px;
+}
+</style>
+
+<div class="cm-box">
+  <div class="cm-header" id="addonFormTitle">Add New Add-On</div><br>
+
+  <form id="addonForm" class="cm-form" enctype="multipart/form-data">
+    <input type="hidden" id="addonId">
+
+    <div>
+      <label>Add-On Name</label>
+      <input id="addonName" required>
+    </div>
+
+    <div>
+      <label>Category</label>
+      <select id="addonCategory" required>
+        <option value="">Select</option>
+        <option value="Welcome Board">Welcome Board</option>
+        <option value="Neon Lights">Neon Lights</option>
+        <option value="Entrance Arch">Entrance Arch</option>
+        <option value="Flower Bouquet">Flower Bouquet</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Price</label>
+      <input id="addonPrice" type="number" required>
+    </div>
+
+    <div>
+      <label>Image</label>
+      <input id="addonImage" type="file">
+    </div>
+    <div id="addonImagePreview" style="grid-column:1 / -1; margin-top:10px; display:none;">
+  <label>Current Image</label><br>
+  <img id="previewImg"
+       src=""
+       style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #ddd;">
+</div>
+
+
+    <div class="cm-actions">
+      <button class="btn-save">Save Add-On</button>
+      <button type="button" class="btn-cancel" onclick="resetAddonForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<div class="cm-box">
+  <div class="cm-header">Existing Add-Ons</div>
+
+  <table class="theme-table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="addonsGrid"></tbody>
+  </table>
+</div>
+
+<div id="toast"
+style="position:fixed;bottom:30px;right:30px;background:#111827;color:#fff;
+padding:14px 22px;border-radius:12px;opacity:0;transition:.3s;z-index:9999">
+</div>
+
+<script>
+function initAddonPage(){
+
+  let editingAddonId = null;
+
+  const addonForm = document.getElementById("addonForm");
+  const addonsGrid = document.getElementById("addonsGrid");
+
+  const addonName = document.getElementById("addonName");
+  const addonCategory = document.getElementById("addonCategory");
+  const addonPrice = document.getElementById("addonPrice");
+  const addonImage = document.getElementById("addonImage");
+  const addonFormTitle = document.getElementById("addonFormTitle");
+  const toast = document.getElementById("toast");
+
+  async function loadAdminAddons(){
+    const res = await fetch("/api/admin/addons");
+    const addons = await res.json();
+
+    if(!addons || addons.length === 0){
+      addonsGrid.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center;color:#6b7280">
+            No add-ons added yet
+          </td>
+        </tr>`;
+      return;
+    }
+
+    addonsGrid.innerHTML = addons.map(a=>`
+      <tr>
+        <td>
+          <img src="${a.image ? '/static/' + a.image : '/static/default.jpg'}"
+               class="theme-thumb"
+               onerror="this.src='/static/default.jpg'">
+        </td>
+        <td>${a.name}</td>
+        <td>${a.category}</td>
+        <td>₹${a.price}</td>
+        <td>
+          <button class="btn-edit"
+  onclick='editAddon(
+    ${JSON.stringify(a.id)},
+    ${JSON.stringify(a.name)},
+    ${JSON.stringify(a.category)},
+    ${a.price},
+    ${JSON.stringify(a.image)}
+  )'>
+  Edit
+</button>
+
+
+          <button class="btn-delete"
+            onclick="deleteAddon('${a.id}')">
+            Delete
+          </button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  addonForm.onsubmit = async e=>{
+    e.preventDefault();
+
+    const fd = new FormData();
+    fd.append("name", addonName.value);
+    fd.append("category", addonCategory.value);
+    fd.append("price", addonPrice.value);
+    if(addonImage.files[0]) fd.append("image", addonImage.files[0]);
+
+    const url = editingAddonId
+      ? `/api/admin/addons/${editingAddonId}`
+      : "/api/admin/addons";
+
+    await fetch(url,{
+      method: editingAddonId ? "PUT" : "POST",
+      body: fd
+    });
+
+    showToast(editingAddonId ? "Add-On updated ✅" : "Add-On added 🎉");
+    resetAddonForm();
+    loadAdminAddons();
+  };
+
+ window.editAddon = (id, name, category, price, image) => {
+  editingAddonId = id;
+
+  addonName.value = name;
+  addonCategory.value = category;
+  addonPrice.value = price;
+  addonFormTitle.innerText = "Edit Add-On";
+
+  // 🔥 IMAGE PREVIEW
+  if (image) {
+    const preview = document.getElementById("addonImagePreview");
+    const img = document.getElementById("previewImg");
+    img.src = "/static/" + image;
+    preview.style.display = "block";
+  }
+
+  // 🔥 CLEAR FILE INPUT (user can choose new if needed)
+  addonImage.value = "";
+
+  // 🔥 AUTO SCROLL TO TOP
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+  window.deleteAddon = async id=>{
+    if(!confirm("Delete add-on?")) return;
+    await fetch(`/api/admin/addons/${id}`,{method:"DELETE"});
+    showToast("Add-On deleted 🗑️");
+    loadAdminAddons();
+  };
+
+  window.resetAddonForm = ()=>{
+  editingAddonId = null;
+  addonForm.reset();
+  addonFormTitle.innerText = "Add New Add-On";
+
+  // 🔥 HIDE IMAGE PREVIEW
+  const preview = document.getElementById("addonImagePreview");
+  const img = document.getElementById("previewImg");
+  if (preview) preview.style.display = "none";
+  if (img) img.src = "";
+};
+
+
+
+  function showToast(msg){
+    toast.innerText = msg;
+    toast.style.opacity = 1;
+    setTimeout(()=>toast.style.opacity=0,2500);
+  }
+
+  loadAdminAddons();
+}
+</script>

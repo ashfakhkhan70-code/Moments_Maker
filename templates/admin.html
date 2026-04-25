@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{--primary:#4f46e5;--sidebar-width:260px;--navbar-height:60px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI;background:#f4f6f9}
+
+:root{
+  --primary:#4f46e5;
+  --sidebar-width:260px;
+  --navbar-height:70px;   /* SAME AS HOME */
+}
+/* ===== NAVBAR ===== */
+.top-navbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:70px;
+
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(6px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:0 18px;
+  box-shadow:0 4px 18px rgba(0,0,0,.55);
+  z-index:1000;
+}
+
+/* LEFT */
+.nav-left{
+  position:absolute;
+  left:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* MENU ICON */
+.menu-btn{
+  font-size:22px;
+  cursor:pointer;
+  color:#e5e7eb;
+}
+
+
+  /* ✅ LOGO */
+  .brand{
+    height:50px;
+    width:82px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .brand img{
+    height:100%;
+    width:100%;
+    object-fit:cover;
+    object-position:center;
+    background:transparent;
+
+    transform:scale(1.7);
+    transform-origin:center;
+
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,.65));
+    display:block;
+  }
+/* CENTER TITLE */
+.navbar-title{
+  font-size:18px;
+  font-weight:600;
+  color:#ffffff;    /* 🔥 WHITE FIXED */
+  letter-spacing:.4px;
+}
+
+
+.menu-btn{font-size:22px;cursor:pointer;margin-right:15px}
+.sidebar{
+  position:fixed;
+  top:70px;
+  left:0;
+  width:260px;
+  height:calc(100vh - 70px);
+
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(6px);
+
+  box-shadow:4px 0 18px rgba(0,0,0,.55);
+  transition:.3s;
+}
+.sidebar.hide{transform:translateX(-100%)}
+.view-btn{
+  background:#3b82f6;   /* blue */
+}
+.view-btn:hover{
+  background:#2563eb;
+}
+
+.menu-item{
+  padding:14px 20px;
+  display:flex;
+  gap:12px;
+  cursor:pointer;
+  color:#e5e7eb;
+  font-weight:500;
+}
+
+.menu-item i{
+  color:#ffb703;
+}
+
+.menu-item:hover,
+.menu-item.active{
+  background:rgba(255,255,255,.10);
+  color:#ffffff;
+}
+.main{
+  margin-top:var(--navbar-height);
+  margin-left:var(--sidebar-width);
+  padding:25px;transition:.3s
+}
+.main.full{margin-left:0}
+
+.card{
+  background:#fff;border-radius:12px;padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px
+}
+.stat-number{font-size:26px;font-weight:bold;color:var(--primary)}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:12px;border-bottom:1px solid #eee;text-align:left}
+th{background:#fafafa}
+
+.page{display:none}
+.page.active{display:block}
+
+.badge{
+  padding:5px 12px;border-radius:20px;
+  font-size:12px;font-weight:600
+}
+.paid{background:#dcfce7;color:#166534}
+.pending{background:#fef3c7;color:#92400e}
+
+button{
+  padding:6px 12px;border:none;border-radius:6px;
+  color:#fff;cursor:pointer;font-size:12px
+}
+.invoice-btn{background:#10b981}
+.danger{background:#ef4444}
+
+/* MODAL */
+.modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.5);display:none;
+  align-items:center;justify-content:center;z-index:2000
+}
+.modal-content{
+  position:relative;
+  background:#fff;padding:25px;border-radius:12px;
+  width:700px;max-width:95%;max-height:85vh;overflow:auto
+}
+.modal-close{
+  position:absolute;top:15px;right:20px;
+  font-size:22px;font-weight:bold;cursor:pointer;color:#555
+}
+.modal-close:hover{color:#ef4444}
+</style>
+</head>
+
+<body>
+
+<div class="top-navbar">
+  <div class="nav-left">
+    <i class="fas fa-bars menu-btn" id="menuToggle"></i>
+
+    <!-- ✅ LOGO WRAPPER -->
+    <div class="brand">
+      <img src="/static/images/logo3.png" alt="Admin Logo">
+    </div>
+  </div>
+
+  <div class="navbar-title">Admin Dashboard</div>
+</div>
+
+
+<div class="sidebar" id="sidebar">
+  <div class="menu-item active" data-page="dashboard"><i class="fas fa-home"></i>Dashboard</div>
+  <div class="menu-item" data-page="users"><i class="fas fa-users"></i>Users</div>
+  <div class="menu-item" data-page="bookings"><i class="fas fa-calendar-check"></i>Bookings</div>
+  <div class="menu-item" data-page="payments"><i class="fas fa-credit-card"></i>Transaction</div>
+  <div class="menu-item" data-page="content"><i class="fas fa-image"></i>Content Management</div>
+  <div class="menu-item" data-page="concerns"><i class="fas fa-headset"></i>Support / Concerns</div>
+ <a href="/admin-logout" class="menu-item">
+  <i class="fas fa-sign-out-alt"></i> Logout
+</a>
+
+</div>
+
+<div class="main" id="mainContent">
+
+<div id="dashboard" class="page active">
+  <h2>Dashboard Overview</h2>
+  <div class="stats">
+    <div class="card">Total Users <div class="stat-number" id="totalUsers">0</div></div>
+    <div class="card">Total Bookings <div class="stat-number" id="totalBookings">0</div></div>
+    <div class="card">Completed Bookings <div class="stat-number" id="completedBookings">0</div></div>
+<div class="card">Cancelled Bookings <div class="stat-number" id="cancelledBookings">0</div></div>
+<div class="card">Pending Bookings<div class="stat-number" id="pendingBookings">0</div></div>
+    <div class="card">Total Earnings <div class="stat-number" id="totalEarnings">₹0</div></div>
+    <div class="card">Pending Amount <div class="stat-number" id="pendingAmount">₹0</div></div>
+  </div>
+</div>
+
+<div id="users" class="page">
+  <h2>All Users</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Mobile</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody id="usersTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="bookings" class="page">
+  <h2>All Bookings</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Booking ID</th><th>Theme</th><th>Add-ons</th>
+          <th>Date</th><th>Status</th><th>Payment</th><th>Action</th><th>Details</th>
+        </tr>
+      </thead>
+      <tbody id="bookingsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="payments" class="page">
+  <h2>Transaction History</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Booking ID</th><th>Transaction ID</th><th>Amount</th>
+          <th>Date</th><th>Status</th><th>Type</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="paymentsTable"></tbody>
+    </table>
+  </div>
+</div>
+<div id="concerns" class="page">
+  <h2>Support / Concern Tickets</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Concern ID</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="concernsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="content" class="page">
+  <iframe 
+    src="/admin/content"
+    style="width:100%;height:85vh;border:none;border-radius:12px;">
+  </iframe>
+</div>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalBody"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+const sidebar=document.getElementById("sidebar");
+const main=document.getElementById("mainContent");
+const modal=document.getElementById("modal");
+
+menuToggle.onclick=()=>{
+  sidebar.classList.toggle("hide");
+  main.classList.toggle("full");
+};
+document.querySelectorAll(".menu-item").forEach(item=>{
+
+  // 🔥 Skip logout button
+  if(item.getAttribute("onclick")) return;
+
+  item.onclick=()=>{
+
+    document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
+    item.classList.add("active");
+
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(item.dataset.page).classList.add("active");
+
+    sidebar.classList.add("hide");
+    main.classList.add("full");
+
+    if(item.dataset.page==="dashboard") loadDashboard();
+    if(item.dataset.page==="users") loadUsers();
+    if(item.dataset.page==="bookings") loadBookings();
+    if(item.dataset.page==="payments") loadPayments();
+    if(item.dataset.page==="concerns") loadConcerns();
+    
+  };
+});
+
+modal.onclick=e=>{
+  if(e.target===modal) closeModal();
+};
+});
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+async function api(url,method='GET',data=null){
+  return fetch(url,{
+    method,
+    headers:{'Content-Type':'application/json'},
+    body:data?JSON.stringify(data):null
+  }).then(r=>r.json());
+}
+
+async function loadDashboard(){
+  const d = await api('/api/dashboard-stats');
+
+  totalUsers.innerText = d.users;
+  totalBookings.innerText = d.bookings;
+
+  // 🔥 NEW
+  completedBookings.innerText = d.completed;
+  cancelledBookings.innerText = d.cancelled;
+  pendingBookings.innerText = d.pending_bookings;
+
+  totalEarnings.innerText = "₹" + d.earnings;
+  pendingAmount.innerText = "₹" + d.pending;
+}
+
+async function loadUsers(){
+  const users=await api('/api/users');
+  usersTable.innerHTML=users.map(u=>`
+    <tr>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.mobile||''}</td>
+      <td><span class="badge paid">Active</span></td>
+      <td><button class="danger">Delete</button></td>
+    </tr>`).join('');
+}
+
+async function viewPayment(paymentId){
+  const d = await api('/api/payment/' + paymentId);
+
+  let paymentStatus = "Paid";
+  let statusBadge = `<span class="badge paid">Paid</span>`;
+  let refundHtml = "";
+
+  if (d.booking_status === "cancelled") {
+    paymentStatus = "Cancelled";
+    statusBadge = `<span class="badge danger">Cancelled</span>`;
+
+    refundHtml = `
+      <p style="color:#dc2626;font-weight:600;">
+        Refund Amount: ₹${d.refund_amount || 0}
+      </p>
+    `;
+  } 
+  else if (d.remaining > 0) {
+    paymentStatus = "Partially Paid";
+    statusBadge = `<span class="badge pending">Partial</span>`;
+  }
+
+  modalBody.innerHTML = `
+    <span class="modal-close" onclick="closeModal()">×</span>
+
+    <h2>Transaction Details</h2>
+
+    <h3>Booking Info</h3>
+    <p>
+      <b>Booking ID:</b> ${d.booking_code}<br>
+      <b>Event Date:</b> ${d.event_date}<br>
+      <b>Status:</b> ${statusBadge}
+    </p>
+
+    <hr>
+
+    <h3>User Details</h3>
+    <p>
+      <b>Name:</b> ${d.customer_name}<br>
+      <b>Mobile:</b> ${d.mobile}<br>
+      <b>Email:</b> ${d.email}
+    </p>
+
+    <hr>
+
+    <h3>Payment Info</h3>
+    <p>
+      <b>Payment ID:</b> ${d.payment_id}<br>
+      <b>Type:</b> ${d.payment_type}<br>
+      <b>Amount Paid:</b> ₹${d.amount}<br>
+      <b>Date:</b> ${d.date}<br>
+      <b>Payment Status:</b> ${paymentStatus}
+    </p>
+
+    ${refundHtml}
+
+    <hr>
+
+    <h3>Payment Summary</h3>
+    <p>
+      <b>Total Booking Amount:</b> ₹${d.total_amount}<br>
+      <b>Total Paid:</b> ₹${d.total_paid}<br>
+      <b>Remaining:</b> ₹${d.remaining}
+    </p>
+  `;
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+async function loadPayments(){
+  const data = await api('/api/payments');
+
+  paymentsTable.innerHTML = data.map(p => {
+
+    let statusBadge = '';
+    let amountHtml = `<b>₹${p.amount}</b>`;
+
+    if (p.booking_status === 'cancelled') {
+      statusBadge = `<span class="badge danger">Cancelled</span>`;
+      amountHtml += `
+        <div style="font-size:12px;color:#dc2626">
+          Refund ₹${p.refund_amount || 0}
+        </div>`;
+    } 
+    else if (p.is_fully_paid) {
+      statusBadge = `<span class="badge paid">Paid</span>`;
+    } 
+    else {
+      statusBadge = `<span class="badge pending">Partial</span>`;
+    }
+
+    return `
+      <tr>
+        <td>${p.booking_code}</td>
+        <td>${p.payment_id}</td>
+        <td>${amountHtml}</td>
+        <td>${p.date}</td>
+        <td>${statusBadge}</td>
+        <td>${p.payment_type}</td>
+        <td>
+          <button class="view-btn"
+            onclick="viewPayment('${p.payment_id}')">
+            View
+          </button>
+
+          ${
+            p.is_fully_paid && p.booking_status !== 'cancelled'
+            ? `<button class="invoice-btn"
+                 onclick="downloadInvoice('${p.booking_code}')">
+                 Download Invoice
+               </button>`
+            : ``
+          }
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+
+async function loadBookings(){
+  const data = await api('/api/bookings');
+
+  bookingsTable.innerHTML = data.map(b=>{
+  let status =
+    b.status === 'completed'
+      ? '<span class="badge paid">Completed</span>'
+    : b.status === 'cancelled'
+      ? '<span class="badge danger">Cancelled</span>'
+      : '<span class="badge pending">Pending</span>';
+
+  let payment =
+    b.payment_status === "Fully Paid"
+      ? '<span class="badge paid">Fully Paid</span>'
+    : b.payment_status === "Advance Paid"
+      ? '<span class="badge paid">Advance Paid</span>'
+      : '<span class="badge pending">Not Paid</span>';
+
+
+    return `
+    <tr>
+      <td>${b.booking_code}</td>
+      <td>${b.theme_name}</td>
+      <td>${b.addons.map(a=>a.name).join(', ')}</td>
+      <td>${b.event_date}</td>
+      <td>${status}</td>
+      <td>${payment}</td>
+<td>
+  ${
+    (b.status !== 'completed' && b.status !== 'cancelled')
+      ? `
+        <button class="view-btn"
+          onclick="updateStatus(${b.id},'completed')">
+          Complete
+        </button>
+
+        <button class="danger"
+          onclick="updateStatus(${b.id},'cancelled')">
+          Cancel
+        </button>
+        `
+      : '<span style="color:#999;">No Action</span>'
+  }
+</td>
+
+
+      <td>
+        <button class="view-btn"
+          onclick="viewBooking(${b.id})">
+          View
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function updateStatus(id,status){
+
+  let payload = { status: status };
+
+  if(status === "cancelled"){
+    payload.cancelled_by = "admin";  // 👈 IMPORTANT
+  }
+
+  await api('/api/update-booking-status/'+id,'POST', payload);
+
+  loadBookings();
+  loadDashboard();
+}
+
+
+async function viewBooking(id){
+  const b = await api('/api/booking/' + id);
+
+  modalBody.innerHTML = `
+    <span class="modal-close" onclick="closeModal()">×</span>
+
+    <h2>${b.theme_name}</h2>
+    <img src="${b.theme_image}" style="width:150px;border-radius:10px"><br><br>
+
+    <h3>User Details</h3>
+    <p>
+      <b>Name:</b> ${b.customer_name}<br>
+      <b>Mobile:</b> ${b.mobile}<br>
+      <b>Email:</b> ${b.contact_email}
+    </p>
+
+    <h3>Event Details</h3>
+    <p>
+      <b>Date:</b> ${b.event_date}<br>
+      <b>Time:</b> ${b.event_time}<br>
+      <b>Venue:</b> ${b.venue_address || 'N/A'}
+    </p>
+
+    <h3>Add-ons</h3>
+    ${
+      b.addons.length
+      ? b.addons.map(a=>`
+        <div style="display:flex;gap:12px;margin-bottom:10px">
+          <img src="${a.image}" style="width:60px;border-radius:8px">
+          <div>
+            <b>${a.name}</b><br>
+            Qty: ${a.qty || 1}<br>
+            ₹${a.price || 0}
+          </div>
+        </div>
+      `).join('')
+      : '<p>No add-ons selected</p>'
+    }
+
+    <h3>Payment Summary</h3>
+    <p>
+      <b>Total Amount:</b> ₹${b.amount}<br>
+      <b>Total Paid:</b> ₹${b.total_paid}<br>
+      <b>Remaining:</b> ₹${b.remaining}<br>
+      <b>Status:</b> ${b.payment_status}
+    </p>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function downloadInvoice(bookingCode){
+  window.location.href = '/api/invoice/' + bookingCode;
+}
+
+async function loadConcerns(){
+  const data = await api('/api/admin/concerns');
+
+  concernsTable.innerHTML = data.map(c => `
+    <tr>
+      <td>${c.concern_id}</td>
+      <td>${c.name}</td>
+      <td>${c.category}</td>
+      <td>
+        <span class="badge ${
+          c.status === 'Resolved' ? 'paid' :
+          c.status === 'In Progress' ? 'pending' :
+          'pending'
+        }">
+          ${c.status || 'Pending'}
+        </span>
+      </td>
+     <td>
+  ${c.created_at
+    ? new Date(c.created_at).toLocaleString("en-GB")
+    : ""}
+</td>
+
+      <td>
+        <button class="view-btn"
+          onclick="viewConcern('${c.id}')">
+          View
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function viewConcern(id){
+  const c = await api('/api/admin/concerns/' + id);
+
+  modalBody.innerHTML = `
+    <span class="modal-close" onclick="closeModal()">×</span>
+
+    <h2>Concern Details</h2>
+
+    <p>
+      <b>Concern ID:</b> ${c.concern_id}<br>
+      <b>Name:</b> ${c.name}<br>
+      <b>Phone:</b> ${c.phone}<br>
+      <b>Booking ID:</b> ${c.booking_id || 'N/A'}<br>
+      <b>Category:</b> ${c.category}<br>
+      <b>Sub Category:</b> ${c.sub_category}<br>
+      <b>Description:</b><br>${c.description}
+    </p>
+
+    <hr>
+
+    <h3>Update Status</h3>
+
+    <select id="statusSelect" style="padding:8px;width:100%;margin-bottom:10px">
+      <option ${c.status==='Pending'?'selected':''}>Pending</option>
+      <option ${c.status==='In Progress'?'selected':''}>In Progress</option>
+      <option ${c.status==='Resolved'?'selected':''}>Resolved</option>
+    </select>
+
+    <textarea id="adminReply"
+      placeholder="Write reply..."
+      style="width:100%;height:80px;margin-bottom:10px"
+    >${c.admin_reply || ''}</textarea>
+
+    <button class="view-btn"
+      onclick="updateConcern('${c.id}')">
+      Save Update
+    </button>
+  `;
+
+  modal.style.display = "flex";
+}
+
+async function updateConcern(id){
+  const status = document.getElementById("statusSelect").value;
+  const reply = document.getElementById("adminReply").value;
+
+  await api('/api/admin/concerns/'+id,'PUT',{
+    status:status,
+    admin_reply:reply
+  });
+
+  closeModal();
+  loadConcerns();
+}
+
+
+function logoutAdmin(){
+  fetch("/admin-logout", {
+    method: "POST"
+  })
+  .then(res => res.json())
+  .then(() => {
+    window.location.href = "/home";
+  });
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

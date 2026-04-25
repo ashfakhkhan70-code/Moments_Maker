@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Payment | MomentsMaker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background:#f4f6fb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh
+        }
+        .payment-box{
+            background:#fff;
+            width:420px;
+            padding:35px;
+            border-radius:16px;
+            box-shadow:0 15px 40px rgba(0,0,0,0.08);
+            text-align:center
+        }
+        h2{margin-bottom:10px;font-weight:700;color:#111827}
+        .amount{font-size:38px;font-weight:800;color:#16a34a;margin:20px 0}
+        .label{font-size:14px;color:#6b7280}
+        .pay-btn{
+            margin-top:25px;
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            background:#2563eb;
+            color:#fff;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer
+        }
+        .pay-btn:hover{background:#1d4ed8}
+        .secure-note{margin-top:15px;font-size:12px;color:#6b7280}
+    </style>
+</head>
+
+<body>
+
+<div class="payment-box">
+    <h2>Complete Your Payment</h2>
+    <div class="label">Amount to Pay</div>
+    <div class="amount">₹ {{ pay_amount }}</div>
+
+    <button id="payBtn" class="pay-btn">Pay ₹{{ pay_amount }}</button>
+    <div class="secure-note"> Secured by Razorpay</div>
+</div>
+
+<script>
+var bookingId = "{{ booking.id }}";
+var paymentType = "{{ ptype }}";
+var payAmount = "{{ pay_amount }}";
+
+var options = {
+    key: "{{ razorpay_key }}",
+    amount: {{ pay_amount * 100 }},
+    currency: "INR",
+    name: "MomentsMaker",
+    description: "Event Decoration Payment",
+    order_id: "{{ order_id }}",
+
+    handler: function (response){
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/payment-success";
+
+        function addField(name, value){
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        }
+
+        addField("razorpay_payment_id", response.razorpay_payment_id);
+        addField("razorpay_order_id", response.razorpay_order_id);
+        addField("razorpay_signature", response.razorpay_signature);
+        addField("booking_id", bookingId);
+        addField("ptype", paymentType);
+        addField("amount", payAmount);
+
+        document.body.appendChild(form);
+        form.submit();
+    },
+
+    theme: { color: "#2563eb" }
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById("payBtn").onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+};
+</script>
+
+</body>
+</html>

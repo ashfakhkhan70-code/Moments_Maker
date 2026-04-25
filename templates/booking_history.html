@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Bookings | MomentsMaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f6fb;
+  padding:18px;
+  color:#111827;
+}
+
+h2{
+  font-size:22px;
+  margin-bottom:18px;
+  font-weight:900;
+}
+
+/* CARD */
+.booking-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 6px 14px rgba(0,0,0,.04);
+}
+
+/* HEADER */
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.theme-section{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.theme-img{
+  width:85px;
+  height:65px;
+  border-radius:12px;
+  object-fit:cover;
+}
+
+.theme-name{
+  font-weight:900;
+  font-size:15px;
+}
+
+.booking-id{
+  font-size:12px;
+  color:#6b7280;
+  margin-top:2px;
+}
+
+/* STATUS */
+.status{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  text-transform:capitalize;
+}
+.pending{background:#fef3c7;color:#92400e}
+.advance_paid{background:#dbeafe;color:#1e3a8a}
+.completed{background:#dcfce7;color:#166534}
+.cancelled{background:#fee2e2;color:#991b1b}
+
+/* EVENT INFO */
+.info-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  font-size:13px;
+  margin-top:8px;
+}
+.info-grid div{color:#6b7280}
+.info-grid b{color:#111827}
+
+/* PAYMENT BOX */
+.payment-box{
+  margin-top:12px;
+  background:#f9fafb;
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+.remaining{
+  font-weight:900;
+  color:#dc2626;
+}
+
+/* ADDONS */
+.addons{
+  margin-top:12px;
+}
+.addons b{font-size:13px}
+.addon-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:8px;
+}
+.addon-card{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#f9fafb;
+  padding:6px 10px;
+  border-radius:10px;
+  font-size:12px;
+}
+.addon-img{
+  width:40px;
+  height:32px;
+  border-radius:6px;
+  object-fit:cover;
+}
+
+/* BUTTONS */
+.btn-row{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:9px 16px;
+  border:none;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.pay{background:#2563eb;color:#fff}
+.cancel{background:#dc2626;color:#fff}
+.invoice{background:#16a34a;color:#fff}
+
+/* MOBILE */
+@media(max-width:650px){
+  .info-grid{grid-template-columns:1fr 1fr}
+  .payment-box{flex-direction:column;gap:6px}
+}
+.top-bar{
+  display:flex;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.back-btn{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.back-btn:hover{
+  background:#1e40af;
+}
+
+.arrow{
+  font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="goHome()">
+    <span class="arrow">←</span> Back
+  </button>
+</div>
+
+<h2>My Booking History</h2>
+
+{% for b in bookings %}
+<div class="booking-card">
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="theme-section">
+      <img src="{{ url_for('static', filename=b.theme_image) }}" class="theme-img">
+      <div>
+        <div class="theme-name">{{ b.theme_name }}</div>
+        <div class="booking-id">Booking ID: {{ b.booking_code }}</div>
+      </div>
+    </div>
+   <span class="status 
+  {% if b.display_status == 'Completed' %}completed
+  {% elif b.display_status == 'Cancelled' %}cancelled
+  {% elif b.display_status == 'Advance Paid' %}advance_paid
+  {% else %}pending{% endif %}">
+  
+  {{ b.display_status }}
+</span>
+
+
+  </div>
+
+  <!-- EVENT INFO -->
+  <div class="info-grid">
+    <div>Date:<b>{{ b.booking_date }}</b></div>
+    <div>Time:<b>{{ b.event_time }}</b></div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="payment-box">
+  <div>Total: ₹{{ b.amount }}</div>
+  <div>Advanced Paid: ₹{{ b.total_paid }}</div>
+
+  {% if b.status == "cancelled" %}
+    <div class="remaining">Refund Initiated</div>
+  {% elif b.remaining == 0 %}
+    <div class="remaining" style="color:#16a34a;">Fully Paid</div>
+  {% else %}
+    <div class="remaining">Remaining: ₹{{ b.remaining }}</div>
+  {% endif %}
+</div>
+
+  <!-- ADDONS WITH IMAGES -->
+  <div class="addons">
+    <b>Add-ons:</b>
+    <div class="addon-list">
+      {% for a in b.addons %}
+        <div class="addon-card">
+          <img src="{{ url_for('static', filename=a.addon_image) }}" class="addon-img">
+          {{ a.addon_name }} (x{{ a.qty }})
+        </div>
+      {% else %}
+        —
+      {% endfor %}
+    </div>
+  </div>
+
+<div class="btn-row">
+
+  {% if b.status != "cancelled" %}
+
+    {% if b.status == "completed" and b.remaining > 0 %}
+      <span style="font-size:12px;color:#6b7280;">
+        Payment link sent on email
+      </span>
+    {% endif %}
+
+    {% if b.can_cancel %}
+  <button class="btn cancel"
+    onclick="cancelBooking({{ b.id }})">
+    Cancel
+  </button>
+{% endif %}
+
+  {% endif %}
+
+  {% if b.status == "completed" %}
+    <a href="{{ url_for('admin_bp.generate_invoice_pdf', booking_code=b.booking_code) }}">
+      <button class="btn invoice">Download Invoice</button>
+    </a>
+  {% endif %}
+
+</div>
+
+</div>
+
+{% endfor %}
+<script>
+function goHome(){
+  window.location.replace("/home");
+}
+async function cancelBooking(id){
+
+  if(!confirm("Are you sure you want to cancel this booking?")){
+    return;
+  }
+
+  const res = await fetch('/api/update-booking-status/' + id,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      status:'cancelled',
+      cancelled_by:'user'
+    })
+  });
+
+  const data = await res.json();
+
+  alert("Booking cancelled.\nRefund Amount: ₹" + data.refund_amount);
+
+  location.reload();
+}
+</script>
+
+
+</body>
+</html>

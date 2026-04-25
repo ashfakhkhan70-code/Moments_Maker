@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Event Portal</title>
+
+  <!-- FONT AWESOME (EYE ICON) -->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text-main: #0f172a; --muted: #64748b;--border: #e2e8f0;--accent: #2563eb; --danger: #ef4444;--success: #16a34a;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 15% 20%, #c8f7ff 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, #b98cff 0%, transparent 45%),
+        linear-gradient(135deg, #e6fbff 0%, #8ee7f3 30%, #3b82f6 60%, #a855f7 100%);}
+
+    /* CARD */
+    .glass-card {width: min(420px, 90vw); padding: 34px 30px; border-radius: 22px; background: #ffffff;
+      box-shadow: 0 35px 80px rgba(15, 23, 42, 0.25);  }
+      
+    h1 {font-size: 1.8rem; margin-bottom: 18px; text-align: center;    color: var(--text-main); }
+      
+    .msg{display:none; padding:10px 12px; border-radius:12px; font-size:.85rem; margin-bottom:16px; }
+    .msg.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}
+    .msg.success{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
+
+    .field {display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; font-size: 0.9rem;}
+
+    .input-wrapper {display: flex; align-items: center; background: #f8fafc; border-radius: 12px;
+      border: 1px solid var(--border); padding: 0 12px; transition: 0.2s ease;}
+
+    .input-wrapper:focus-within {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,.3);
+      background: #ffffff;}
+
+    input {flex: 1; border: none; outline: none; background: transparent; padding: 12px 6px;
+      font-size: 0.9rem; color: var(--text-main);}
+
+    input::placeholder {color: #94a3b8;}
+
+    .toggle-password {cursor: pointer;font-size: 1rem; color: #64748b; margin-left: 6px;}
+
+    .inline-row {display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+     font-size: 0.8rem; color: var(--muted);}
+
+    .checkbox-row {display: flex; align-items: center; gap: 6px;}
+
+    .inline-row a { color: var(--accent); text-decoration: none; font-weight: 500;}
+
+    button { width: 100%; border: none; padding: 13px 0; border-radius: 999px; background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #ffffff;font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 18px 40px rgba(37,99,235,.4);
+      transition: 0.2s ease; }
+
+    button:hover {transform: translateY(-1px); box-shadow: 0 22px 50px rgba(37,99,235,.55);}
+      
+    button:disabled{ opacity:.7; cursor:not-allowed; transform:none;}
+
+    .divider {display: flex; align-items: center; gap: 10px margin: 20px 0; font-size: 0.8rem;  color: var(--muted);}
+
+    .divider .line { flex: 1; height: 1px; background: var(--border);}
+
+    .switch-text { text-align: center; font-size: 0.85rem; color: var(--muted);}
+
+    .switch-text a {color: var(--accent); font-weight: 600; text-decoration: none;}
+  </style>
+</head>
+<body>
+
+<main class="glass-card">
+  <h1>Welcome back</h1>
+
+  <div id="msg" class="msg"></div>
+
+  <form id="loginForm">
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input id="email" name="email" type="email" placeholder="Enter your email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="input-wrapper">
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <span class="toggle-password" onclick="togglePassword()">
+          <i class="fa-solid fa-eye" id="eyeIcon"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="inline-row">
+      <label class="checkbox-row">
+        <input id="remember" type="checkbox"> Remember me
+      </label>
+      <a href="/forget">Forgot password?</a>
+    </div>
+
+    <button id="btn" type="submit">Log in</button>
+
+    <div class="divider">
+      <span class="line"></span>
+      <span>or</span>
+      <span class="line"></span>
+    </div>
+
+    <p class="switch-text">
+      Don’t have an account?
+      <a href="/signup">Create an account</a>
+    </p>
+
+  </form>
+</main>
+
+<script>
+  function togglePassword() {
+    const pwd = document.getElementById("password");
+    const Sicon = document.getElementById("eyeIcon");
+
+    if (pwd.type === "password") {
+      pwd.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      pwd.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btn");
+
+  function showMessage(text, type){
+    msg.className = "msg " + type;
+    msg.textContent = text;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.className = "msg";
+    msg.textContent = "";
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const remember = document.getElementById("remember").checked;
+
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+
+    try{
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, remember })
+      });
+
+      const out = await res.json();
+
+      if(!res.ok){
+        showMessage(out.message || "Login failed", "error");
+        btn.disabled = false;
+        btn.textContent = "Log in";
+        return;
+      }
+
+      showMessage(out.message || "Login successful ✅", "success");
+
+      const redirectTo = out.redirect || "/home";
+      setTimeout(() => {
+        window.location.href = redirectTo;
+      }, 700);
+
+    } catch(err){
+      showMessage("Server not running / network error", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Log in";
+    }
+  });
+</script>
+
+</body>
+</html>

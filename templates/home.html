@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MomentsMaker | Event Decoration Specialists</title>
+
+<!-- ✅ TAB ICON (FAVICON) -->
+<link rel="icon" type="image/jpeg" href="static/images/logo2.jpeg">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f9f9f9;
+    color:#111;
+  }
+  a{text-decoration:none;color:inherit}
+
+  /* ================= HEADER ================= */
+  header{
+  position:fixed;
+  top:0;left:0;right:0;
+  background:rgba(0,0,0,.65);  /* solid color */
+  z-index:1000;
+}
+
+
+  /* ✅ navbar height fixed (no increase) */
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 22px;
+    position:relative;
+    height:70px;
+  }
+  .nav-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .menu-icon{
+    font-size:1.6rem;
+    color:#e5e7eb;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  /* ✅ LOGO */
+  .brand{
+    height:50px;
+    width:82px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .brand img{
+    height:100%;
+    width:100%;
+    object-fit:cover;
+    object-position:center;
+    background:transparent;
+
+    transform:scale(1.7);
+    transform-origin:center;
+
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,.65));
+    display:block;
+  }
+
+  .nav-center{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+  }
+  .nav-center ul{
+    list-style:none;
+    display:flex;
+    gap:22px;
+  }
+  .nav-center a{color:#fff}
+  .nav-center a:hover{color:#ffb703}
+
+  .login-btn{
+    padding:8px 20px;
+    border-radius:22px;
+    background:#2563eb;
+    color:#fff;
+    font-size:.9rem;
+  }
+  .spacer{height:70px}
+
+  /* ================= SIDE MENU (MATCH NAVBAR) ================= */
+  .side-menu{
+  position:fixed;
+  top:70px;
+  left:-300px;
+  width:280px;
+  height:calc(100vh - 70px);
+
+  background:rgba(0,0,0,.65); /* solid */
+  padding:18px;
+  transition:.35s ease;
+  z-index:1500;
+  border-right:1px solid rgba(255,255,255,.08);
+  box-shadow:4px 0 18px rgba(0,0,0,.55);
+}
+
+  .side-menu.active{left:0}
+
+  .menu-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    color:#e5e7eb;
+    transition:.2s;
+  }
+  .menu-item i{
+    color:#ffb703;
+    width:18px;
+  }
+  .menu-item:hover{
+    background:rgba(255,255,255,.10);
+    color:#fff;
+  }
+
+  /* SUB MENU */
+  .sub-menu{
+    padding-left:38px;
+    display:none;
+  }
+  .sub-menu li{
+    padding:8px 0;
+    cursor:pointer;
+    color:#cbd5e1;
+  }
+  .sub-menu li:hover{color:#ffb703}
+
+  /* ================= HERO ================= */
+  .hero{
+    min-height:100vh;
+    background:
+      url("https://images.pexels.com/photos/169211/pexels-photo-169211.jpeg")
+      center/cover no-repeat;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:90px;
+  }
+  .hero-content{
+    text-align:center;
+    max-width:600px;
+    margin-bottom:35px;
+    padding:0 16px;
+  }
+  .hero h1{font-size:2.4rem;margin-bottom:12px;color:#fff}
+
+  /* ================= CAROUSEL ================= */
+  .slider{
+  width:100%;
+  height:340px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+
+.track{
+  display:flex;
+  gap:20px;
+  transition:transform .5s ease;
+}
+
+.slide{
+  width:260px;
+  height:180px;
+  border-radius:18px;
+  overflow:hidden;
+  flex-shrink:0;
+  opacity:.4;
+  transform:scale(.85);
+  transition:transform .5s ease, opacity .5s ease;
+}
+
+.slide.active{
+  transform:scale(1.25);
+  opacity:1;
+  z-index:5;
+}
+
+
+  .slide img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  /* ARROWS */
+  .arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    font-size:2rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:10;
+    user-select:none;
+  }
+  .arrow.left{left:20px}
+  .arrow.right{right:20px}
+  .arrow:hover{background:#ffb703;color:#000}
+
+  /* ================= FOOTER ================= */
+  footer{
+    background:#020617;
+    color:#94a3b8;
+    padding:20px 15px;
+    text-align:center;
+    font-size:.85rem;
+  }
+  footer span{color:#ffb703;font-weight:600}
+
+  /* MOBILE */
+  @media(max-width:768px){
+    .nav-center{display:none}
+    .slide{width:200px}
+
+    .brand{
+      width:70px;
+      height:46px;
+    }
+    .brand img{
+      transform:scale(1.85);
+    }
+  }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="nav-left">
+      <!-- ✅ Hamburger ALWAYS visible -->
+      <div class="menu-icon" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+
+      <!-- ✅ ONLY LOGO -->
+      <a href="/home" class="brand">
+        <img src="static/images/logo3.png" alt="MomentsMaker Logo">
+      </a>
+    </div>
+
+    <nav class="nav-center">
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/about">About Us</a></li>
+     
+      </ul>
+    </nav>
+
+    <!-- ✅ LOGIN/LOGOUT dynamic -->
+    {% if session.get("user") %}
+      <a href="/logout" class="login-btn">Logout</a>
+    {% else %}
+      <a href="/login" class="login-btn">Login</a>
+    {% endif %}
+  </div>
+</header>
+
+<!-- ===== SIDE MENU (✅ ONLY WHEN LOGGED IN) ===== -->
+{% if session.get("user") %}
+<div class="side-menu" id="sideMenu">
+
+<a class="menu-item" href="/account#profile">
+  <i class="fa-solid fa-user-circle"></i> Profile
+</a>
+
+<a class="menu-item" href="/account#security">
+  <i class="fa-solid fa-key"></i> Change Password
+</a>
+
+  <a class="menu-item" href="/booking-history">
+  <i class="fa-solid fa-calendar-check"></i>Booking History
+</a>
+
+  <div class="menu-item" onclick="toggleSub()">
+    <i class="fa-solid fa-images"></i>Gallery
+  </div>
+
+  <ul class="sub-menu" id="galleryMenu">
+    <li onclick="openGalleryFilter('wedding')">Wedding Decoration</li>
+    <li onclick="openGalleryFilter('birthday')">Birthday Decoration</li>
+    <li onclick="openGalleryFilter('anniversary')">Anniversary Decoration</li>
+    <li onclick="openGalleryFilter('engagement')">Engagement Decoration</li>
+    <li onclick="openGalleryFilter('haldi')">Haldi Decoration</li>
+    <li onclick="openGalleryFilter('babyshower')">Baby Shower</li>
+    <li onclick="openGalleryFilter('welcomebaby')">Welcome Baby</li>
+    <li onclick="openGalleryFilter('festival')">Festival Decoration</li>
+  </ul>
+
+  <a class="menu-item" href="/support">
+    <i class="fa-solid fa-headset"></i>Help & Support
+  </a>
+
+</div>
+{% endif %}
+
+<div class="spacer"></div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Beautiful Decorations for Special Moments</h1>
+  </div>
+
+  <div class="slider" id="slider">
+    <div class="arrow left">&#10094;</div>
+
+    <div class="track" id="track">
+  <div class="slide" data-cat="babyshower"><img src="static/images/baby.JPG"></div>
+  <div class="slide" data-cat="welcomebaby"><img src="static/images/wb5.avif"></div>
+  <div class="slide" data-cat="haldi"><img src="static/images/haldi5.jpg"></div>
+  <div class="slide" data-cat="festival"><img src="static/images/newyear5.jpg"></div>
+  <div class="slide active" data-cat="wedding"><img src="static/images/wed5.jpeg"></div>
+  <div class="slide" data-cat="nc"><img src="static/images/nc5.jpg"></div>
+  <div class="slide" data-cat="festival"><img src="static/images/diwali5.jpg"></div>
+  <div class="slide" data-cat="anniversary"><img src="static/images/anniversary3.png"></div>
+  <div class="slide" data-cat="birthday"><img src="static/images/birthday14.jpeg"></div>
+  
+</div>
+
+
+    <div class="arrow right">&#10095;</div>
+  </div>
+</section>
+
+<footer>
+  © 2026 <span>MomentsMaker</span> · Event Decoration Specialists
+</footer>
+
+<script>
+/* ✅ server se login status */
+const isLoggedIn = {{ 'true' if session.get("user") else 'false' }};
+
+/* ===== HAMBURGER MENU ===== */
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");     // may be null
+const galleryMenu = document.getElementById("galleryMenu"); // may be null
+
+menuBtn.onclick = () => {
+  // ✅ Not logged in -> do nothing
+  if(!isLoggedIn) return;
+
+  // ✅ Logged in -> open menu
+  if(sideMenu) sideMenu.classList.toggle("active");
+};
+
+function toggleSub(){
+  if(!galleryMenu) return;
+  galleryMenu.style.display =
+    galleryMenu.style.display === "block" ? "none" : "block";
+}
+
+/* ✅ Gallery submenu click -> Open gallery + filter */
+function openGalleryFilter(filter){
+  if(sideMenu) sideMenu.classList.remove("active");
+  if(galleryMenu) galleryMenu.style.display = "none";
+  window.location.href = `/gallery#filter=${filter}`;
+}
+
+/* ===== CLEAN CENTER CAROUSEL ===== */
+
+const slider = document.querySelector(".slider");
+const track = document.querySelector(".track");
+const slides = Array.from(document.querySelectorAll(".slide"));
+
+const GAP = 20;
+const AUTO_TIME = 2000;
+
+let index = slides.findIndex(s => s.classList.contains("active"));
+let timer;
+
+/* CENTER CALCULATION */
+function update(){
+
+  slides.forEach(s => s.classList.remove("active"));
+  slides[index].classList.add("active");
+
+  const slideWidth = slides[0].offsetWidth;
+  const totalWidth = slideWidth + GAP;
+
+  const offset =
+    (slider.offsetWidth / 2) -
+    (totalWidth * index + slideWidth / 2);
+
+  track.style.transform = `translateX(${offset}px)`;
+}
+
+/* RIGHT ARROW → visually right move */
+function moveRight(){
+   index = (index - 1 + slides.length) % slides.length;
+  update();
+ 
+}
+
+/* LEFT ARROW → visually left move */
+function moveLeft(){
+ index = (index + 1) % slides.length;
+  update();
+}
+
+/* FIXED ARROW DIRECTION */
+document.querySelector(".arrow.right").onclick = moveRight;
+document.querySelector(".arrow.left").onclick  = moveLeft;
+
+/* AUTO */
+function startAuto(){
+  timer = setInterval(moveRight, AUTO_TIME);
+}
+
+function stopAuto(){
+  clearInterval(timer);
+}
+
+slider.addEventListener("mouseenter", stopAuto);
+slider.addEventListener("mouseleave", startAuto);
+
+/* MOBILE SWIPE */
+let startX = 0;
+
+slider.addEventListener("touchstart", e=>{
+  startX = e.touches[0].clientX;
+});
+
+slider.addEventListener("touchend", e=>{
+  let endX = e.changedTouches[0].clientX;
+
+  if(startX - endX > 50) moveRight();
+  if(endX - startX > 50) moveLeft();
+});
+
+/* CLICK → OPEN CATEGORY */
+slides.forEach(slide=>{
+  slide.addEventListener("click", ()=>{
+    const category = slide.getAttribute("data-cat");
+    if(category){
+      window.location.href = `/gallery#filter=${category}`;
+    }
+  });
+});
+
+window.onload = ()=>{
+  update();
+  startAuto();
+};
+
+
+</script>
+
+</body>
+</html>
